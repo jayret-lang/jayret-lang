@@ -300,7 +300,7 @@
         { name: 'collapseThreshold', update: `${collapseThreshold}` },
         {
           name: 'hoveredId',
-          value: 'null',
+          update: 'null',
           on: [
             {
               events: [
@@ -319,7 +319,8 @@
               update: 'null'
             },
           ]
-        }
+        },
+        { name: 'staggerXAxisLabels', update: false },
       );
 
       const dataTable = {
@@ -937,7 +938,7 @@
         name: 'xAxisLabelOffsets',
         values: []
       });
-      signals.push({name: 'staggerXAxisLabels', update: false});
+      signals.push({name: 'staggerXAxisLabels', value: false});
     }
     
     function barChart(globalOptions, rawData) {
@@ -1147,7 +1148,7 @@
       const signals = [
         {
           name: 'hoveredSeries',
-          value: 'null',
+          update: 'null',
           on: [
             {
               events: [
@@ -1421,7 +1422,8 @@
         { name: 'minValue',
           update: 'extent(pluck(data("table"), "minVal"))[0]' },
         { name: 'maxValue',
-          update: 'extent(pluck(data("table"), "maxVal"))[1]' }
+          update: 'extent(pluck(data("table"), "maxVal"))[1]' },
+        { name: 'staggerXAxisLabels', update: false },
       ];
       const outlierTooltip = `, 'bottom whisker': datum.lowWhisker, 'top whisker': datum.highWhisker`;
       const tooltip = `{
@@ -1908,6 +1910,7 @@
         { name: 'wrapMaxY', update: 'floor(domain("dotScale")[1] * (1 - headspace))' },
         { name: 'xMinValue', value: xMinValue },
         { name: 'xMaxValue', value: xMaxValue },
+        { name: 'staggerXAxisLabels', update: false },
       ];
       const scales = [
         {
@@ -2481,11 +2484,7 @@
             y: { scale: `yscale`, field: 'y', offset: { signal: `${imageScaleFactorY} * datum.imageOffsetY` } },
             stroke: { signal: `hoveredLegend === '${prefix}' ? 'white' : '${color}'` },
             strokeWidth: { signal: `(hoveredLegend === '${prefix}' ? 1 : 0)` },
-            zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
           },
-          hover: {
-            zindex: { value: 1 }
-          }
         }
       });
       if (pointshapeType === 'circle') {
@@ -2505,11 +2504,9 @@
               y: { scale: `yscale`, field: 'y' },
               fill: { value: color },
               stroke: { signal: `hoveredLegend === '${prefix}' ? 'white' : '${color}'` },
-              zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
             },
             hover: {
               stroke: { value: color },
-              zindex: { value: 1 }
             }
           }
         });
@@ -2605,11 +2602,9 @@
             x: { scale: `xscale`, field: 'x' },
             y: { scale: `yscale`, field: 'y' },
             strokeWidth: { signal: `(hoveredLegend === '${prefix}' ? 2 : 1) * ${lineWidth}` },
-            zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
           },
           hover: {
             strokeWidth: { value: 2 * lineWidth },
-            zindex: { value: 1 }
           }
         }
       });
@@ -2723,11 +2718,7 @@
               y: { scale: `yscale`, field: 'y', offset: { signal: `${-pointSize} * datum.imageOffsetY` } },
               stroke: { signal: `hoveredLegend === '${prefix}' ? 'white' : '${dataColor}'` },
               strokeWidth: { signal: `(hoveredLegend === '${prefix}' ? 1 : 0)` },
-              zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
             },
-            hover: {
-              zindex: { value: 1 }
-            }
           }
         },
         {
@@ -2746,11 +2737,7 @@
               yc: { scale: `yscale`, field: 'y' },
               fill: { value: dataColor },
               stroke: { signal: `hoveredLegend === '${prefix}' ? 'white' : '${dataColor}'` },
-              zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
             },
-            hover: {
-              zindex: { value: 1 }
-            }
           }
         },
         {
@@ -2784,10 +2771,6 @@
               xc: { scale: `xscale`, field: 'x' },
               yc: { scale: `yscale`, field: 'yprime' },
               stroke: { signal: `hoveredLegend === '${prefix}' ? 'white' : '${intervalColor}'` },
-              zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
-            },
-            hover: {
-              zindex: { value: 1 }
             }
           }
         },
@@ -2883,10 +2866,6 @@
               yc: { scale: `yscale`, field: 'y' },
               stroke: { signal: `hoveredLegend === '${prefix}' ? 'white' : '${pointColor}'` },
               strokeWidth: { signal: `(hoveredLegend === '${prefix}' ? 1 : 0)` },
-              zindex: { signal: `hoveredLegend === '${prefix}' ? 1 : null` }
-            },
-            hover: {
-              zindex: { value: 1 }
             }
           }
         }
@@ -3070,7 +3049,7 @@
         });
         signals.push({
           name: 'hoveredLegend',
-          value: 'null',
+          update: 'null',
           on: [
             {
               events: [
@@ -3093,7 +3072,7 @@
       } else {
         signals.push({
           name: 'hoveredLegend',
-          value: 'null'
+          update: 'null'
         });
       }
 
