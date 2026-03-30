@@ -494,11 +494,11 @@
       this.render(ctx1);
       other.render(ctx2);
       try{
-        var data1 = ctx1.getImageData(0, 0, w1, h1),
-        data2 = ctx2.getImageData(0, 0, w2, h2);
+        var data1 = ctx1.getImageData(0, 0, w1, h1, { pixelFormat: 'rgba-unorm8' }),
+        data2 = ctx2.getImageData(0, 0, w2, h2, { pixelFormat: 'rgba-unorm8' });
         var pixels1 = data1.data,
             pixels2 = data2.data;
-        return RUNTIME.ffi.makeRight(rmsDiff(pixels1, pixels2));
+        return RUNTIME.ffi.makeRight(RUNTIME.wrap(jsnums.makeRoughnum(rmsDiff(pixels1, pixels2))));
       } catch(e){
         // if we violate CORS, just bail
         return RUNTIME.ffi.makeLeft("exception: " + String(e));
