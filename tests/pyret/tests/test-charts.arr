@@ -44,3 +44,24 @@ check "render-chart":
     .get-image() does-not-raise
   render-chart(p5) does-not-raise
 end
+
+check "image-dot-chart-from-list ordering invariant":
+  # Each image carries the name of its own category, so a save-image of a
+  # failing run shows exactly which image landed under which column label.
+  ant-img = text("ant", 24, red)
+  bee-img = text("bee", 24, blue)
+  cat-img = text("cat", 24, green)
+
+  # Two inputs encoding the same logical (image, category) bag but in
+  # different input orders. dot-chart-from-list sorts categories internally,
+  # and a categorical chart should depend only on the bag, not the input
+  # order; so both inputs should render to byte-identical images.
+  scrambled = render-chart(from-list.image-dot-chart(
+      [list: bee-img, cat-img, ant-img],
+      [list: "bee", "cat", "ant"])).get-image()
+  pre-sorted = render-chart(from-list.image-dot-chart(
+      [list: ant-img, bee-img, cat-img],
+      [list: "ant", "bee", "cat"])).get-image()
+
+  images-equal(scrambled, pre-sorted) is true
+end
