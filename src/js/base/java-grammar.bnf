@@ -1,0 +1,174 @@
+/*
+  name: JavaGrammar
+*/
+
+program: prelude top-block
+
+prelude: (import-stmt)*
+
+import-stmt: IMPORT NAME SEMI
+import-stmt: IMPORT NAME AS NAME SEMI
+import-stmt: IMPORT NAME PARENNOSPACE STRING RPAREN SEMI
+import-stmt: IMPORT NAME PARENNOSPACE STRING RPAREN AS NAME SEMI
+import-stmt: INCLUDE NAME SEMI
+import-stmt: INCLUDE NAME AS NAME SEMI
+import-stmt: INCLUDE NAME PARENNOSPACE STRING RPAREN SEMI
+
+top-block: (top-stmt)*
+
+top-stmt: fun-decl
+        | data-decl
+        | check-block
+        | let-stmt
+        | var-stmt
+        | assign-stmt
+        | expr-stmt
+
+block: LBRACE (block-stmt)* RBRACE
+
+block-stmt: fun-decl
+          | data-decl
+          | if-stmt
+          | for-stmt
+          | check-block
+          | return-stmt
+          | let-stmt
+          | var-stmt
+          | assign-stmt
+          | yield-stmt
+          | expr-stmt
+
+# ---------------------------------------------------------------------------
+# Function declarations
+
+fun-decl: type-ann NAME PARENNOSPACE [param (COMMA param)*] RPAREN block [where-clause]
+
+param: type-ann NAME
+
+where-clause: WHERE LBRACE (block-stmt | assert-stmt)* RBRACE
+
+# ---------------------------------------------------------------------------
+# Type annotations (in declarations)
+
+type-ann: INT
+        | LONG
+        | DOUBLE
+        | FLOAT
+        | BOOLEAN
+        | VOID
+        | NAME [LT type-ann (COMMA type-ann)* GT]
+        | PARENSPACE [type-ann (COMMA type-ann)*] THINARROW type-ann RPAREN
+
+# ---------------------------------------------------------------------------
+# Data type declarations
+
+data-decl: DATA NAME LBRACE variant-decl (SEMI variant-decl)* [SEMI] RBRACE
+
+variant-decl: NAME PARENNOSPACE [variant-member (COMMA variant-member)*] RPAREN
+            | NAME
+
+variant-member: type-ann NAME
+
+# ---------------------------------------------------------------------------
+# Statements
+
+if-stmt: IF PARENSPACE full-expr RPAREN block (ELSE IF PARENSPACE full-expr RPAREN block)* [ELSE block]
+
+for-stmt: FOR PARENSPACE type-ann NAME COLON full-expr RPAREN block
+
+# SEMI required after return to avoid ambiguity with unary minus
+return-stmt: RETURN full-expr SEMI
+           | RETURN SEMI
+
+let-stmt: type-ann NAME EQUALS full-expr [SEMI]
+
+var-stmt: VAR type-ann NAME EQUALS full-expr [SEMI]
+
+assign-stmt: NAME COLONEQUALS full-expr [SEMI]
+
+# SEMI is optional; lambdas allowed as expression statements
+expr-stmt: full-expr [SEMI]
+
+# ---------------------------------------------------------------------------
+# Check blocks
+
+check-block: ATCHECK VOID NAME PARENNOSPACE RPAREN LBRACE (block-stmt | assert-stmt)* RBRACE
+           | ATCHECK LBRACE (block-stmt | assert-stmt)* RBRACE
+
+assert-stmt: ASSERTEQUALS PARENNOSPACE full-expr COMMA full-expr RPAREN [SEMI]
+           | ASSERTNOTEQUALS PARENNOSPACE full-expr COMMA full-expr RPAREN [SEMI]
+           | ASSERTTRUE PARENNOSPACE full-expr RPAREN [SEMI]
+           | ASSERTFALSE PARENNOSPACE full-expr RPAREN [SEMI]
+           | ASSERTSATISFIES PARENNOSPACE full-expr COMMA full-expr RPAREN [SEMI]
+           | ASSERTRAISES PARENNOSPACE full-expr COMMA full-expr RPAREN [SEMI]
+           | full-expr IS full-expr [SEMI]
+           | full-expr ISNOT full-expr [SEMI]
+           | full-expr SATISFIES full-expr [SEMI]
+           | full-expr RAISES full-expr [SEMI]
+
+# ---------------------------------------------------------------------------
+# Switch expression (pattern matching)
+
+switch-expr: SWITCH PARENSPACE full-expr RPAREN LBRACE (case-branch)* [default-branch] RBRACE
+
+case-branch: CASE NAME PARENNOSPACE [NAME (COMMA NAME)*] RPAREN COLON switch-body
+           | CASE NAME COLON switch-body
+
+default-branch: DEFAULT COLON switch-body
+
+# switch-body: zero or more preparatory stmts, then a mandatory yield
+switch-body: (block-stmt)* yield-stmt
+
+yield-stmt: YIELD full-expr [SEMI]
+
+# ---------------------------------------------------------------------------
+# Lambda expressions (NOT part of prim-expr/binop-expr to avoid operator-precedence
+# ambiguity; appears only at positions where full-expr is expected)
+
+lambda-expr: PARENSPACE [lambda-param (COMMA lambda-param)*] RPAREN THINARROW full-expr
+           | PARENNOSPACE [lambda-param (COMMA lambda-param)*] RPAREN THINARROW full-expr
+
+lambda-param: type-ann NAME
+            | NAME
+
+# ---------------------------------------------------------------------------
+# Expressions
+
+# full-expr allows lambdas at any "top" expression position; lambda is NOT inside binop-expr
+full-expr: lambda-expr
+         | binop-expr
+
+binop-expr: unop-expr (binop unop-expr)*
+
+binop: PLUS | DASH | TIMES | SLASH | PERCENT
+     | EQUALEQUAL | NEQ
+     | LEQ | GEQ | LT | GT
+     | AND | OR
+
+unop-expr: BANG unop-expr
+         | DASH unop-expr
+         | app-or-access
+
+app-or-access: app-or-access PARENNOSPACE [full-expr (COMMA full-expr)*] RPAREN
+             | app-or-access DOT NAME
+             | app-or-access LBRACK binop-expr RBRACK
+             | prim-expr
+
+prim-expr: NUMBER
+         | STRING
+         | TRUE
+         | FALSE
+         | NULL
+         | NAME
+         | PARENSPACE binop-expr RPAREN
+         | PARENAFTERBRACE binop-expr RPAREN
+         | switch-expr
+         | construct-expr
+         | map-for-expr
+
+# Pyret-style list/construct literal: [list: 1, 2, 3]
+construct-expr: LBRACK NAME COLON [full-expr (COMMA full-expr)*] RBRACK
+              | LBRACK RBRACK
+
+# [for (...) { yield expr; }] -- map-style for expression
+map-for-expr: LBRACK FOR PARENSPACE type-ann NAME COLON full-expr RPAREN block RBRACK

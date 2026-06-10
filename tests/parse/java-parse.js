@@ -1,0 +1,208 @@
+var Jasmine = require('jasmine');
+var jazz = new Jasmine();
+const R = require("requirejs");
+const fs = require("fs");
+const path = require("path");
+var build = process.env["PHASE"] || "build/phaseA";
+R.config({
+  waitSeconds: 15000,
+  paths: {
+    "trove": "../../" + build + "/trove",
+    "js": "../../" + build + "/js",
+    "compiler": "../../" + build + "/arr/compiler",
+    "jglr": "../../lib/jglr",
+    "pyret-base": "../../" + build
+  }
+});
+
+R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) {
+  function parse(str) {
+    const toks = T.Tokenizer;
+    toks.tokenizeFrom(str);
+    var parsed = G.JavaGrammar.parse(toks);
+    if (!parsed) { return false; }
+    var countParses = G.JavaGrammar.countAllParses(parsed);
+    if (countParses === 1) {
+      return G.JavaGrammar.constructUniqueParse(parsed);
+    } else {
+      throw new Error("Ambiguous parse: " + countParses + " parses for: " + str.slice(0, 80));
+    }
+  }
+
+  function parsesOk(str) {
+    expect(parse(str)).not.toBe(false, "Should parse: " + str);
+  }
+
+  function parseFails(str) {
+    expect(parse(str)).toBe(false, "Should fail to parse: " + str);
+  }
+
+  describe("Jarret parser", function() {
+
+    describe("example programs", function() {
+      var examplesDir = "../../examples/jarret";
+      var examples = fs.readdirSync(examplesDir).filter(function(f) {
+        return f.endsWith(".jarr");
+      });
+      examples.forEach(function(fname) {
+        it("should parse " + fname, function() {
+          var src = fs.readFileSync(path.join(examplesDir, fname), "utf8");
+          var result = parse(src);
+          expect(result).not.toBe(false);
+        });
+      });
+    });
+
+    describe("function declarations", function() {
+      it("should parse a simple function", function() {
+        parsesOk("int square(int n) { return n * n; }");
+      });
+      it("should parse a void function", function() {
+        parsesOk("void doNothing() { }");
+      });
+      it("should parse multiple parameters", function() {
+        parsesOk("int add(int a, int b) { return a + b; }");
+      });
+      it("should parse nested function calls", function() {
+        parsesOk("int f(int n) { return g(h(n)); }");
+      });
+      it("should parse recursive functions", function() {
+        parsesOk("int fib(int n) { if (n == 0) { return 0; } if (n == 1) { return 1; } return fib(n - 1) + fib(n - 2); }");
+      });
+      it("should parse a function with a where clause", function() {
+        parsesOk("int sq(int n) { return n * n; } where { assertEquals(sq(3), 9); }");
+      });
+    });
+
+    describe("type annotations", function() {
+      it("should parse primitive types", function() {
+        parsesOk("int f(int x) { return x; }");
+        parsesOk("double f(double x) { return x; }");
+        parsesOk("boolean f(boolean x) { return x; }");
+      });
+      it("should parse generic types", function() {
+        parsesOk("List<Number> f(List<Number> xs) { return xs; }");
+      });
+      it("should parse function types as parameters", function() {
+        parsesOk("int applyToFive(int n, (int -> int) f) { return f(n); }");
+      });
+    });
+
+    describe("variable declarations", function() {
+      it("should parse let binding", function() {
+        parsesOk("void f() { int x = 5; }");
+      });
+      it("should parse var binding", function() {
+        parsesOk("void f() { var int x = 5; }");
+      });
+      it("should parse assignment", function() {
+        parsesOk("void f() { var int x = 5; x := 10; }");
+      });
+    });
+
+    describe("control flow", function() {
+      it("should parse if without else", function() {
+        parsesOk("void f(int n) { if (n > 0) { } }");
+      });
+      it("should parse if-else", function() {
+        parsesOk("int abs(int n) { if (n < 0) { return -n; } else { return n; } }");
+      });
+      it("should parse if-else-if chain", function() {
+        parsesOk("String sign(int n) { if (n > 0) { return \"pos\"; } else if (n < 0) { return \"neg\"; } else { return \"zero\"; } }");
+      });
+      it("should parse for-each", function() {
+        parsesOk("void f(List<Number> xs) { for (int x : xs) { print(x); } }");
+      });
+    });
+
+    describe("switch expressions", function() {
+      it("should parse switch with cases", function() {
+        parsesOk("data Color { Red; Green; Blue; } String name(Color c) { return switch (c) { case Red: yield \"red\"; case Green: yield \"green\"; default: yield \"blue\"; }; }");
+      });
+      it("should parse switch with constructor patterns", function() {
+        parsesOk("data Shape { Circle(double r); } double area(Shape s) { return switch (s) { case Circle(r): yield r * r * 3.14; }; }");
+      });
+    });
+
+    describe("expressions", function() {
+      it("should parse arithmetic", function() {
+        parsesOk("int f() { return 1 + 2 * 3 - 4 / 2; }");
+      });
+      it("should parse comparisons", function() {
+        parsesOk("boolean f(int n) { return n > 0 && n < 100; }");
+      });
+      it("should parse string concatenation", function() {
+        parsesOk("String f(String s) { return \"hello \" + s; }");
+      });
+      it("should parse unary minus", function() {
+        parsesOk("int f(int n) { return -n; }");
+      });
+      it("should parse unary not", function() {
+        parsesOk("boolean f(boolean b) { return !b; }");
+      });
+      it("should parse negative literals in function calls", function() {
+        parsesOk("@Check void t() { assertEquals(abs(-3), 3); }");
+      });
+      it("should parse lambdas", function() {
+        parsesOk("void f() { var int y = applyTwice(3, (int n) -> n * 2); }");
+      });
+      it("should parse method chaining (a.f() via dot-access then call)", function() {
+        parsesOk("void f() { lists.filter(xs, (int n) -> n > 0); }");
+      });
+      it("should parse list literals", function() {
+        parsesOk("void f() { var List<Number> xs = [list: 1, 2, 3]; }");
+      });
+      it("should parse empty list literals", function() {
+        parsesOk("void f() { var List<Number> xs = [list: ]; }");
+      });
+      it("should parse map-for comprehension", function() {
+        parsesOk("void f() { var List<Number> xs = [for (int n : ys) { yield n * 2; }]; }");
+      });
+    });
+
+    describe("data declarations", function() {
+      it("should parse a simple data declaration", function() {
+        parsesOk("data Bool { True; False; }");
+      });
+      it("should parse a data declaration with typed fields", function() {
+        parsesOk("data Shape { Circle(double radius); Rectangle(double w, double h); }");
+      });
+    });
+
+    describe("check blocks", function() {
+      it("should parse named check blocks", function() {
+        parsesOk("@Check void testIt() { assertEquals(1 + 1, 2); }");
+      });
+      it("should parse anonymous check blocks", function() {
+        parsesOk("@Check { assertEquals(1 + 1, 2); }");
+      });
+      it("should parse all assertion forms", function() {
+        parsesOk("@Check { assertEquals(1, 1); assertNotEquals(1, 2); assertTrue(1 == 1); assertFalse(1 == 2); assertSatisfies(1, (int n) -> n > 0); }");
+      });
+      it("should allow variable bindings in check blocks", function() {
+        parsesOk("@Check void t() { int x = square(3); assertEquals(x, 9); }");
+      });
+    });
+
+    describe("imports", function() {
+      it("should parse a simple import", function() {
+        parsesOk("import lists; void f() { }");
+      });
+      it("should parse a file import", function() {
+        parsesOk("import file(\"other.jarr\"); void f() { }");
+      });
+    });
+
+    describe("rejected programs", function() {
+      it("should reject a bare keyword as an expression", function() {
+        parseFails("return;");  // return outside a function
+      });
+    });
+
+  });
+
+  jazz.execute();
+}, function(err) {
+  console.error("RequireJS load error:", err.message);
+  process.exit(1);
+});
