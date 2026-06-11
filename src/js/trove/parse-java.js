@@ -829,14 +829,50 @@
         'map-for-expr': function(node) {
           var k = node.kids;
           var p = pos(node.pos);
-          // [LBRACK, FOR, PARENSPACE, type-ann, NAME, COLON, full-expr, RPAREN, block, RBRACK]
-          var ann     = trTypeAnn(k[3]);
-          var bindTok = k[4];
-          var coll    = tr(k[6]);
-          // The block should contain a yield-stmt as the last element
+
+          // Two forms:
+          //   (1) [LBRACK, FOR, PARENSPACE, type-ann, NAME, COLON, full-expr, RPAREN, block, RBRACK]
+          //       — implicit lists.map (back-compat).
+          //   (2) [LBRACK, FOR, NAME, PARENNOSPACE, for-bind, (COMMA for-bind)*, RPAREN, block, RBRACK]
+          //       — explicit iterator op named by the NAME. Multiple for-binds
+          //       allowed (e.g. fold takes an accumulator + an iterator).
+
+          var iterFn, forBinds, blockNode;
+          if (k[2].name === 'PARENSPACE') {
+            // Form (1)
+            var ann1     = trTypeAnn(k[3]);
+            var bindTok1 = k[4];
+            var coll1    = tr(k[6]);
+            blockNode    = k[8];
+            forBinds = [RUNTIME.getField(ast, 's-for-bind')
+              .app(pos(bindTok1.pos), sbind(pos(bindTok1.pos), bindTok1, ann1), coll1)];
+            iterFn = RUNTIME.getField(ast, 's-dot')
+              .app(p, sid(p, "lists"), RUNTIME.makeString("map"));
+          } else {
+            // Form (2): k[2] is the iterator NAME
+            iterFn = sid(pos(k[2].pos), k[2].value);
+            forBinds = [];
+            for (var i = 4; i < k.length; i++) {
+              var kid = k[i];
+              if (kid.name === 'for-bind') {
+                // for-bind kids: [type-ann, NAME, EQUALS|COLON, full-expr]
+                var fkids   = kid.kids;
+                var bAnn    = trTypeAnn(fkids[0]);
+                var bTok    = fkids[1];
+                var bVal    = tr(fkids[3]);
+                forBinds.push(RUNTIME.getField(ast, 's-for-bind')
+                  .app(pos(kid.pos), sbind(pos(kid.pos), bTok, bAnn), bVal));
+              } else if (kid.name === 'block') {
+                blockNode = kid;
+              }
+            }
+          }
+
+          // Body translation: a yield-stmt at the end is the result; otherwise
+          // lift returns as for a normal block.
           var yieldStmt = null;
           var preStmts  = [];
-          var blockStmts = getBlockStmts(k[8]).map(unwrapStmt);
+          var blockStmts = getBlockStmts(blockNode).map(unwrapStmt);
           blockStmts.forEach(function(s) {
             if (s.name === 'yield-stmt') yieldStmt = s;
             else preStmts.push(s);
@@ -850,12 +886,9 @@
           } else {
             bodyExpr = liftReturns(blockStmts, p);
           }
-          var forBind = RUNTIME.getField(ast, 's-for-bind')
-            .app(pos(bindTok.pos), sbind(pos(bindTok.pos), bindTok, ann), coll);
-          var iterFn = RUNTIME.getField(ast, 's-dot')
-            .app(p, sid(p, "lists"), RUNTIME.makeString("map"));
+
           return RUNTIME.getField(ast, 's-for')
-            .app(p, iterFn, makeList([forBind]), sblank(), asBlock(p, bodyExpr), RUNTIME.makeBoolean(false));
+            .app(p, iterFn, makeList(forBinds), sblank(), asBlock(p, bodyExpr), RUNTIME.makeBoolean(false));
         },
 
         'yield-stmt': function(node) {

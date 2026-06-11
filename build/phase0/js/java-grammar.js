@@ -322,6 +322,12 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("construct-expr_A0_I3_I1", [new Token("COMMA"), new Nonterm("full-expr")], E.Rule.Inline)
   g.addRule("construct-expr", [new Token("LBRACK"), new Token("RBRACK")])
   g.addRule("map-for-expr", [new Token("LBRACK"), new Token("FOR"), new Token("PARENSPACE"), new Nonterm("type-ann"), new Token("NAME"), new Token("COLON"), new Nonterm("full-expr"), new Token("RPAREN"), new Nonterm("block"), new Token("RBRACK")])
+  g.addRule("map-for-expr", [new Token("LBRACK"), new Token("FOR"), new Token("NAME"), new Token("PARENNOSPACE"), new Nonterm("for-bind"), new Nonterm("map-for-expr_A1_I5*"), new Token("RPAREN"), new Nonterm("block"), new Token("RBRACK")])
+  g.addRule("map-for-expr_A1_I5*", [], E.Rule.Inline);
+  g.addRule("map-for-expr_A1_I5*", [new Nonterm("map-for-expr_A1_I5*"), new Nonterm("map-for-expr_A1_I5")], E.Rule.ListSnoc("map-for-expr_A1_I5*", "map-for-expr_A1_I5", true));
+  g.addRule("map-for-expr_A1_I5", [new Token("COMMA"), new Nonterm("for-bind")], E.Rule.Inline)
+  g.addRule("for-bind", [new Nonterm("type-ann"), new Token("NAME"), new Token("EQUALS"), new Nonterm("full-expr")])
+  g.addRule("for-bind", [new Nonterm("type-ann"), new Token("NAME"), new Token("COLON"), new Nonterm("full-expr")])
 
   g.initializeParser(false);
   var cycles = g.checkForCycles();

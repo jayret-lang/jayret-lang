@@ -225,5 +225,17 @@ new-expr: NEW NAME PARENNOSPACE [full-expr (COMMA full-expr)*] RPAREN
 construct-expr: LBRACK NAME COLON [full-expr (COMMA full-expr)*] RBRACK
               | LBRACK RBRACK
 
-# [for (...) { yield expr; }] -- map-style for expression
+# Comprehension forms:
+#   [for (T x : xs) { ... }]                 -- implicit map (back-compat)
+#   [for filter(T x : xs) { yield p; }]      -- filter comprehension
+#   [for map(T x : xs) { yield f(x); }]      -- explicit map
+#   [for fold(T acc = init, T x : xs) { yield expr; }]   -- fold
+#
+# The OP after FOR is just a NAME, so users can also write `for myOp(...)
+# { ... }` for their own iterators. for-bind = `T x = expr` is an
+# accumulator (initial value); `T x : xs` is an iterator (over a list).
 map-for-expr: LBRACK FOR PARENSPACE type-ann NAME COLON full-expr RPAREN block RBRACK
+            | LBRACK FOR NAME PARENNOSPACE for-bind (COMMA for-bind)* RPAREN block RBRACK
+
+for-bind: type-ann NAME EQUALS full-expr
+        | type-ann NAME COLON full-expr

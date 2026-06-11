@@ -493,6 +493,27 @@ Equivalent Pyret: `for map(x from myList): x * 2 end`
 The `[...]` brackets signal that the loop produces a list value (as opposed to side-effecting
 iteration).
 
+### Other comprehension forms: filter, fold, user iterators
+
+A general `[for OP(binds...) { ... }]` form covers the common comprehension
+operations. The `OP` is any identifier and names the iterator (`filter`,
+`map`, `fold`, or a user-defined one). Each bind is either an iterator
+(`T x : xs`) or an accumulator (`T acc = init`).
+
+```java
+// filter: keep elements satisfying the body's boolean yield.
+[for filter(int x : xs) { yield x > 0; }]
+
+// explicit map (equivalent to the implicit form above).
+[for map(int x : xs) { yield x * 2; }]
+
+// fold: accumulator + iterator; body returns the next accumulator.
+[for fold(int acc = 0, int x : xs) { yield acc + x; }]
+```
+
+Equivalent Pyret: `for filter(x from xs): x > 0 end`, etc. The bare `[for (T x : xs) { ... }]`
+form remains as a shorthand for `for map(...)`.
+
 ### While loops (deferred)
 
 `while` loops require mutable state and are supported syntactically, but idiomatic Jarret

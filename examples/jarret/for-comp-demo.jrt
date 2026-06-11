@@ -1,0 +1,49 @@
+// for-comp-demo.jrt - comprehension-style iteration: filter, fold, map.
+//
+// Three new forms beyond the existing implicit-map comprehension:
+//   [for filter(T x : xs) { yield p; }]                       — filter
+//   [for map(T x : xs)    { yield f(x); }]                    — explicit map
+//   [for fold(T acc = i, T x : xs) { yield expr; }]           — fold
+//
+// The OP name after `for` is a regular identifier that names the iterator
+// to call (`filter`, `map`, `fold`, etc.) — user-defined iterators work
+// the same way. `T x : xs` binds `x` to each element of `xs`; `T acc = init`
+// is fold's accumulator with its initial value.
+
+List<Number> xs = [list: 1, -2, 3, -4, 5, -6];
+
+// filter
+List<Number> positives = [for filter(int x : xs) { yield x > 0; }];
+
+// explicit map (same as the implicit form, just written out)
+List<Number> doubled   = [for map(int x : xs) { yield x * 2; }];
+
+// fold to a single number: sum
+int sum = [for fold(int acc = 0, int x : xs) { yield acc + x; }];
+
+// fold to a list, reversing the input
+List<Number> reversed = [for fold(List<Number> acc = empty, int x : xs) {
+    yield link(x, acc);
+}];
+
+@Check void testFilter() {
+    assertEquals(positives, [list: 1, 3, 5]);
+}
+
+@Check void testExplicitMap() {
+    assertEquals(doubled, [list: 2, -4, 6, -8, 10, -12]);
+}
+
+@Check void testFold() {
+    assertEquals(sum, -3);
+}
+
+@Check void testFoldToList() {
+    assertEquals(reversed, [list: -6, 5, -4, 3, -2, 1]);
+}
+
+// Implicit-map form still works (no op name; backward-compat with earlier examples).
+@Check void testImplicitMap() {
+    List<Number> tripled = [for (int x : xs) { yield x * 3; }];
+    assertEquals(tripled, [list: 3, -6, 9, -12, 15, -18]);
+}

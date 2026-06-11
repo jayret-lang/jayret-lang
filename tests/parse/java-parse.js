@@ -220,6 +220,24 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("for comprehensions", function() {
+      it("should still parse the implicit-map form", function() {
+        parsesOk("void f() { List<Number> r = [for (int x : xs) { yield x * 2; }]; }");
+      });
+      it("should parse a for filter", function() {
+        parsesOk("void f() { List<Number> r = [for filter(int x : xs) { yield x > 0; }]; }");
+      });
+      it("should parse a for map", function() {
+        parsesOk("void f() { List<Number> r = [for map(int x : xs) { yield x * 2; }]; }");
+      });
+      it("should parse a for fold with accumulator + iterator", function() {
+        parsesOk("void f() { int r = [for fold(int acc = 0, int x : xs) { yield acc + x; }]; }");
+      });
+      it("should accept user-named iterators", function() {
+        parsesOk("void f() { Object r = [for myOp(int x : xs) { yield x; }]; }");
+      });
+    });
+
     describe("block expression", function() {
       it("should parse an empty block", function() {
         parsesOk("void f() { Object o = block {}; }");
