@@ -341,6 +341,35 @@ Shape s2 = new Circle(3);      // Java-style; identical to s1
 
 Pyret's `sharing:` block for methods shared across all variants is deferred to a later release.
 
+### Table literals
+
+Tables are spreadsheet-like values with typed columns and a list of rows. Build
+one with `table { ... }`: list the typed column headers first (comma-separated,
+terminated by `;`), then any number of `row: v1, v2, ...;` lines, in order.
+
+```java
+Table cities = table {
+    String name, int pop;
+    row: "Providence", 190;
+    row: "Boston", 685;
+};
+cities.length()                  // 2
+cities.row-n(0).get-value("pop") // 190
+```
+
+Equivalent Pyret:
+
+```pyret
+table: name :: String, pop :: Number
+  row: "Providence", 190
+  row: "Boston", 685
+end
+```
+
+Column operations (`sieve`, `order`, `extend`, `select`) and external loaders
+(`load-table`) are deferred; use the `tables` module's functions and method
+calls on the table value for now.
+
 ---
 
 ## 10. Pattern matching
@@ -559,7 +588,7 @@ The following Pyret features have no Jarret syntax yet and are planned for futur
 
 | Feature | Pyret construct | Notes |
 |---------|----------------|-------|
-| Tables | `table:` / `load-table:` | Complex; deferred |
+| `load-table` / table operations | `load-table:` / `sieve`/`order`/`extend` | Literal `table { ... }` is supported; loaders and column ops are deferred |
 | Reactors | `reactor:` | Domain-specific; deferred |
 | `while` loops | _(none in Pyret)_ | Deferred; use recursion |
 | `sharing:` on data | `sharing:` | Deferred |

@@ -171,6 +171,16 @@ prim-expr: NUMBER
          | map-for-expr
          | new-expr
          | ask-expr
+         | table-expr
+
+# Table literal: headers (typed column names) followed by rows (value
+# tuples introduced by `row:`). Mirrors Pyret's `table: cols ... row: vals
+# ... end`.
+table-expr: TABLE LBRACE table-header (COMMA table-header)* SEMI (table-row SEMI)* RBRACE
+
+table-header: type-ann NAME
+
+table-row: ROW COLON full-expr (COMMA full-expr)*
 
 # Multi-branch conditional: pick the first branch whose test is true.
 # Mirrors Pyret's `ask: | c then: e | ... | otherwise: e end`.

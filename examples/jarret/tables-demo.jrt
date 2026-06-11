@@ -1,0 +1,29 @@
+// tables-demo.jrt - literal table values.
+//
+// Tables are spreadsheet-like values with typed columns and a sequence
+// of rows. Construct one with `table { ... }`: the first section lists
+// typed column headers, then each `row: ...` line gives one tuple of
+// values matching the column order.
+
+Table cities = table {
+    String name, int pop;
+    row: "Providence", 190;
+    row: "Boston", 685;
+    row: "Cambridge", 118;
+};
+
+@Check void testCities() {
+    assertEquals(cities.length(), 3);
+    assertEquals(cities.row-n(0).get-value("name"), "Providence");
+    assertEquals(cities.row-n(1).get-value("pop"), 685);
+    assertEquals(cities.row-n(2).get-value("name"), "Cambridge");
+}
+
+// Empty rows after headers (zero data rows) are also a valid table.
+Table emptyTab = table {
+    String tag, double value;
+};
+
+@Check void testEmpty() {
+    assertEquals(emptyTab.length(), 0);
+}

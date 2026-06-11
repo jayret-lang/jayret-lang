@@ -265,6 +265,19 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("prim-expr", [new Nonterm("map-for-expr")])
   g.addRule("prim-expr", [new Nonterm("new-expr")])
   g.addRule("prim-expr", [new Nonterm("ask-expr")])
+  g.addRule("prim-expr", [new Nonterm("table-expr")])
+  g.addRule("table-expr", [new Token("TABLE"), new Token("LBRACE"), new Nonterm("table-header"), new Nonterm("table-expr_I3*"), new Token("SEMI"), new Nonterm("table-expr_I5*"), new Token("RBRACE")])
+  g.addRule("table-expr_I3*", [], E.Rule.Inline);
+  g.addRule("table-expr_I3*", [new Nonterm("table-expr_I3*"), new Nonterm("table-expr_I3")], E.Rule.ListSnoc("table-expr_I3*", "table-expr_I3", true));
+  g.addRule("table-expr_I3", [new Token("COMMA"), new Nonterm("table-header")], E.Rule.Inline)
+  g.addRule("table-expr_I5*", [], E.Rule.Inline);
+  g.addRule("table-expr_I5*", [new Nonterm("table-expr_I5*"), new Nonterm("table-expr_I5")], E.Rule.ListSnoc("table-expr_I5*", "table-expr_I5", true));
+  g.addRule("table-expr_I5", [new Nonterm("table-row"), new Token("SEMI")], E.Rule.Inline)
+  g.addRule("table-header", [new Nonterm("type-ann"), new Token("NAME")])
+  g.addRule("table-row", [new Token("ROW"), new Token("COLON"), new Nonterm("full-expr"), new Nonterm("table-row_I3*")])
+  g.addRule("table-row_I3*", [], E.Rule.Inline);
+  g.addRule("table-row_I3*", [new Nonterm("table-row_I3*"), new Nonterm("table-row_I3")], E.Rule.ListSnoc("table-row_I3*", "table-row_I3", true));
+  g.addRule("table-row_I3", [new Token("COMMA"), new Nonterm("full-expr")], E.Rule.Inline)
   g.addRule("ask-expr", [new Token("ASK"), new Token("LBRACE"), new Nonterm("ask-branch"), new Token("SEMI"), new Nonterm("ask-expr_A0_I4*"), new Token("RBRACE")])
   g.addRule("ask-expr_A0_I4*", [], E.Rule.Inline);
   g.addRule("ask-expr_A0_I4*", [new Nonterm("ask-expr_A0_I4*"), new Nonterm("ask-expr_A0_I4")], E.Rule.ListSnoc("ask-expr_A0_I4*", "ask-expr_A0_I4", true));

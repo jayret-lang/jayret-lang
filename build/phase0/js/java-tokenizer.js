@@ -124,6 +124,9 @@ define("pyret-base/js/java-tokenizer", ["jglr/jglr"], function(E) {
     // Multi-branch conditional (Pyret's ask:)
     {name: "ASK",       val: "ask",       parenIsForExp: true},
     {name: "OTHERWISE", val: "otherwise", parenIsForExp: true},
+    // Table literals
+    {name: "TABLE",     val: "table",     parenIsForExp: true},
+    {name: "ROW",       val: "row",       parenIsForExp: true},
     // Type keywords
     {name: "INT",     val: "int",     parenIsForExp: true},
     {name: "LONG",    val: "long",    parenIsForExp: true},

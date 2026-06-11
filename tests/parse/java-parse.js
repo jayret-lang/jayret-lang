@@ -205,6 +205,24 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("tables", function() {
+      it("should parse a table with one column and one row", function() {
+        parsesOk("void f() { Table t = table { String name; row: \"x\"; }; }");
+      });
+      it("should parse a table with multiple columns and rows", function() {
+        parsesOk("void f() { Table t = table { String name, int age; row: \"A\", 1; row: \"B\", 2; }; }");
+      });
+      it("should parse a table with no rows (headers only)", function() {
+        parsesOk("void f() { Table t = table { String name, int age; }; }");
+      });
+      it("should reject a table with no headers", function() {
+        parseFails("void f() { Table t = table { }; }");
+      });
+      it("should reject a table missing the row keyword", function() {
+        parseFails("void f() { Table t = table { String s; \"hi\"; }; }");
+      });
+    });
+
     describe("ask / otherwise", function() {
       it("should parse a single-branch ask with otherwise", function() {
         parsesOk("int f(int n) { return ask { n < 0 -> -1; otherwise -> 0; }; }");

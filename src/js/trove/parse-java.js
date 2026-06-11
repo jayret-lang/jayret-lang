@@ -678,6 +678,38 @@
           }
         },
 
+        'table-expr': function(node) {
+          // table { type1 col1, type2 col2 ; row: v1, v2 ; row: v1, v2 ; }
+          //   → s-table(loc, [s-field-name(loc, col, ann), ...],
+          //                  [s-table-row(loc, [expr,...]), ...])
+          var k = node.kids;
+          var p = pos(node.pos);
+          var headers = [];
+          var rows = [];
+          for (var i = 0; i < k.length; i++) {
+            var kid = k[i];
+            if (kid.name === 'table-header') {
+              // kids: [type-ann, NAME]
+              var ann = trTypeAnn(kid.kids[0]);
+              var hp  = pos(kid.pos);
+              var hn  = kid.kids[1].value;
+              headers.push(RUNTIME.getField(ast, 's-field-name')
+                .app(hp, RUNTIME.makeString(hn), ann));
+            } else if (kid.name === 'table-row') {
+              // kids: [ROW, COLON, full-expr, COMMA, full-expr, ...]
+              var rp = pos(kid.pos);
+              var elems = [];
+              for (var j = 2; j < kid.kids.length; j++) {
+                if (kid.kids[j].name === 'full-expr') elems.push(tr(kid.kids[j]));
+              }
+              rows.push(RUNTIME.getField(ast, 's-table-row')
+                .app(rp, makeList(elems)));
+            }
+          }
+          return RUNTIME.getField(ast, 's-table')
+            .app(p, makeList(headers), makeList(rows));
+        },
+
         'ask-expr': function(node) {
           // ask { c1 -> e1; c2 -> e2; otherwise -> e3; }
           //   → s-if-pipe(loc, [s-if-pipe-branch(c1, sblock(e1)), ...], false)
