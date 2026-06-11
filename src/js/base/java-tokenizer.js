@@ -119,6 +119,8 @@ define("pyret-base/js/java-tokenizer", ["jglr/jglr"], function(E) {
     {name: "ISNOT",   val: "is-not",  parenIsForExp: true},
     {name: "SATISFIES", val: "satisfies", parenIsForExp: true},
     {name: "RAISES",  val: "raises",  parenIsForExp: true},
+    // Debugging
+    {name: "SPY",     val: "spy",     parenIsForExp: true},
     // Type keywords
     {name: "INT",     val: "int",     parenIsForExp: true},
     {name: "LONG",    val: "long",    parenIsForExp: true},

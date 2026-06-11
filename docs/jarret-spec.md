@@ -463,6 +463,27 @@ Equivalent Pyret: `check: 1 + 1 is 2 end`
 
 ---
 
+## 13a. Debugging: `spy`
+
+`spy(name1, name2, ...)` prints each variable's current value to the console,
+labeled with the variable's name. Useful for tracing recursion or watching how
+a value changes shape. Execution continues normally; `spy` is not a return.
+
+```java
+int factorial(int n) {
+    if (n == 0) { return 1; }
+    int sub = factorial(n - 1);
+    spy(n, sub);
+    return n * sub;
+}
+```
+
+Equivalent Pyret: `spy: n, sub end`. Only bare identifiers are accepted;
+labeled forms (`spy "checkpoint": x end`) and arbitrary expressions are
+deferred.
+
+---
+
 ## 14. Return statements
 
 Jarret supports `return` via a three-tier system, reflecting Pyret's expression-oriented
@@ -521,8 +542,7 @@ The following Pyret features have no Jarret syntax yet and are planned for futur
 | `while` loops | _(none in Pyret)_ | Deferred; use recursion |
 | `sharing:` on data | `sharing:` | Deferred |
 | Refinement type annotations | `pred-ann` | Use dynamic checks for now |
-| `spy` debugging | `spy:` | Deferred |
-| `provide` / `provide-types` | `provide` | Deferred |
+| `provide` / `provide-types` | `provide` | Top-level definitions are implicitly `provide *`; finer-grained control deferred |
 | Mid-loop `return` | _(requires CPS)_ | Use if/else; see §14 Tier 3 |
 | `new ClassName(...)` | _(constructor call)_ | Use `ClassName(...)` directly |
 

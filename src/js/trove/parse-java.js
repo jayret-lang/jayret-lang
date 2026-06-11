@@ -740,6 +740,22 @@
           return trReturnVal(node);
         },
 
+        'spy-stmt': function(node) {
+          // spy(x, y, z) → spy: x, y, z end (implicit labels = identifier names)
+          var k = node.kids;
+          var p = pos(node.pos);
+          var fields = [];
+          for (var i = 2; i < k.length - 2; i++) {
+            if (k[i].name !== 'NAME') continue;  // skip COMMA tokens
+            var nm = k[i].value;
+            var fp = pos(k[i].pos);
+            fields.push(RUNTIME.getField(ast, 's-spy-expr')
+              .app(fp, RUNTIME.makeString(nm), sid(fp, nm), RUNTIME.makeBoolean(true)));
+          }
+          return RUNTIME.getField(ast, 's-spy-block')
+            .app(p, snone(), makeList(fields));
+        },
+
         'type-ann': function(node) {
           return trTypeAnn(node);
         },

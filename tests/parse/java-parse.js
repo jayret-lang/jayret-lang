@@ -193,6 +193,18 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("spy", function() {
+      it("should parse a single-variable spy", function() {
+        parsesOk("void f() { int x = 1; spy(x); }");
+      });
+      it("should parse a multi-variable spy", function() {
+        parsesOk("void f() { int x = 1; int y = 2; spy(x, y); }");
+      });
+      it("should reject spy on a non-identifier expression", function() {
+        parseFails("void f() { spy(1 + 2); }");
+      });
+    });
+
     describe("rejected programs", function() {
       it("should reject a bare keyword as an expression", function() {
         parseFails("return;");  // return outside a function

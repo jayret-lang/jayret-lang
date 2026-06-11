@@ -46,7 +46,12 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("block-stmt", [new Nonterm("var-stmt")])
   g.addRule("block-stmt", [new Nonterm("assign-stmt")])
   g.addRule("block-stmt", [new Nonterm("yield-stmt")])
+  g.addRule("block-stmt", [new Nonterm("spy-stmt")])
   g.addRule("block-stmt", [new Nonterm("expr-stmt")])
+  g.addRule("spy-stmt", [new Token("SPY"), new Token("PARENSPACE"), new Token("NAME"), new Nonterm("spy-stmt_I3*"), new Token("RPAREN"), new Token("SEMI")])
+  g.addRule("spy-stmt_I3*", [], E.Rule.Inline);
+  g.addRule("spy-stmt_I3*", [new Nonterm("spy-stmt_I3*"), new Nonterm("spy-stmt_I3")], E.Rule.ListSnoc("spy-stmt_I3*", "spy-stmt_I3", true));
+  g.addRule("spy-stmt_I3", [new Token("COMMA"), new Token("NAME")], E.Rule.Inline)
   g.addRule("fun-decl", [new Nonterm("type-ann"), new Token("NAME"), new Token("PARENNOSPACE"), new Nonterm("fun-decl_I3?"), new Token("RPAREN"), new Nonterm("block"), new Nonterm("fun-decl_I6?")])
   g.addRule("fun-decl_I3?", [], E.Rule.Inline);
   g.addRule("fun-decl_I3?", [new Nonterm("fun-decl_I3")], E.Rule.Inline);

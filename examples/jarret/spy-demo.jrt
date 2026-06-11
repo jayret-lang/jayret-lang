@@ -1,0 +1,18 @@
+// spy-demo.jrt - the `spy` debugging statement.
+//
+// `spy(x, y, z)` prints "x: <value>", "y: <value>", "z: <value>" to the
+// console at the point of execution. The label is the variable name
+// itself. Useful for tracing recursion or pinpointing where a value
+// changes shape. The program continues running normally.
+
+int factorial(int n) {
+    if (n == 0) { return 1; }
+    int sub = factorial(n - 1);
+    spy(n, sub);
+    return n * sub;
+}
+
+@Check void testFactorial() {
+    assertEquals(factorial(0), 1);
+    assertEquals(factorial(3), 6);
+}

@@ -36,7 +36,11 @@ block-stmt: fun-decl
           | var-stmt
           | assign-stmt
           | yield-stmt
+          | spy-stmt
           | expr-stmt
+
+# Debugging: prints "name: <value>" for each NAME, like Pyret's `spy: x, y end`.
+spy-stmt: SPY PARENSPACE NAME (COMMA NAME)* RPAREN SEMI
 
 # ---------------------------------------------------------------------------
 # Function declarations
