@@ -270,9 +270,23 @@ Equivalent Pyret: `if x > 0: "positive" else if x < 0: "negative" else: "zero" e
 The `else` clause is optional when the expression is used as a statement (void context). When used
 as a value (e.g., on the right-hand side of a binding), `else` is required.
 
-### ask / otherwise (Pyret-style, deferred)
+### ask / otherwise
 
-The Pyret `ask:` form is not included in the initial Jarret release.
+Cleaner than long `if / else if / else` chains when each branch is a single
+expression. Picks the first branch whose condition is true.
+
+```java
+int sign = ask {
+    n < 0 -> -1;
+    n > 0 -> 1;
+    otherwise -> 0;
+};
+```
+
+Equivalent Pyret: `ask: | n < 0 then: -1 | n > 0 then: 1 | otherwise: 0 end`
+
+`otherwise` is optional; if no branch matches and there's no `otherwise`, a
+runtime error is raised. At least one regular branch is required.
 
 ---
 
@@ -547,7 +561,6 @@ The following Pyret features have no Jarret syntax yet and are planned for futur
 |---------|----------------|-------|
 | Tables | `table:` / `load-table:` | Complex; deferred |
 | Reactors | `reactor:` | Domain-specific; deferred |
-| `ask` / `otherwise` | `ask:` | Use `if/else if/else` instead |
 | `while` loops | _(none in Pyret)_ | Deferred; use recursion |
 | `sharing:` on data | `sharing:` | Deferred |
 | Refinement type annotations | `pred-ann` | Use dynamic checks for now |

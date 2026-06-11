@@ -170,6 +170,15 @@ prim-expr: NUMBER
          | construct-expr
          | map-for-expr
          | new-expr
+         | ask-expr
+
+# Multi-branch conditional: pick the first branch whose test is true.
+# Mirrors Pyret's `ask: | c then: e | ... | otherwise: e end`.
+ask-expr: ASK LBRACE ask-branch SEMI (ask-branch SEMI)* RBRACE
+        | ASK LBRACE ask-branch SEMI (ask-branch SEMI)* otherwise-branch SEMI RBRACE
+
+ask-branch: binop-expr THINARROW full-expr
+otherwise-branch: OTHERWISE THINARROW full-expr
 
 # `new ClassName(args)` is accepted as sugar for `ClassName(args)` to
 # accommodate Java muscle memory. The `new` keyword is purely syntactic;

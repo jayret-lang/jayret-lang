@@ -1,0 +1,39 @@
+// ask-demo.jrt - multi-branch conditional (Pyret's ask:).
+//
+// `ask { cond -> expr; ... otherwise -> expr; }` picks the first branch
+// whose condition is true. Cleaner than long `if / else if / else`
+// chains when each branch is a single expression. `otherwise` is
+// optional; if no branch matches and there's no `otherwise`, a runtime
+// error is raised.
+
+String classify(int n) {
+    return ask {
+        n < 0 -> "negative";
+        n == 0 -> "zero";
+        n < 10 -> "small";
+        n < 100 -> "medium";
+        otherwise -> "large";
+    };
+}
+
+int sign(int n) {
+    return ask {
+        n < 0 -> -1;
+        n > 0 -> 1;
+        otherwise -> 0;
+    };
+}
+
+@Check void testClassify() {
+    assertEquals(classify(-5), "negative");
+    assertEquals(classify(0), "zero");
+    assertEquals(classify(7), "small");
+    assertEquals(classify(50), "medium");
+    assertEquals(classify(1000), "large");
+}
+
+@Check void testSign() {
+    assertEquals(sign(-3), -1);
+    assertEquals(sign(0), 0);
+    assertEquals(sign(42), 1);
+}

@@ -205,6 +205,24 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("ask / otherwise", function() {
+      it("should parse a single-branch ask with otherwise", function() {
+        parsesOk("int f(int n) { return ask { n < 0 -> -1; otherwise -> 0; }; }");
+      });
+      it("should parse a multi-branch ask", function() {
+        parsesOk("int f(int n) { return ask { n < 0 -> -1; n > 0 -> 1; otherwise -> 0; }; }");
+      });
+      it("should parse ask without otherwise", function() {
+        parsesOk("int f(int n) { return ask { n < 0 -> -1; }; }");
+      });
+      it("should reject ask with no branches", function() {
+        parseFails("int f(int n) { return ask { }; }");
+      });
+      it("should reject ask with only otherwise", function() {
+        parseFails("int f(int n) { return ask { otherwise -> 0; }; }");
+      });
+    });
+
     describe("new keyword", function() {
       it("should parse new with no args", function() {
         parsesOk("data D { Empty(); } void f() { Shape x = new Empty(); }");

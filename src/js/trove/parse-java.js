@@ -678,6 +678,37 @@
           }
         },
 
+        'ask-expr': function(node) {
+          // ask { c1 -> e1; c2 -> e2; otherwise -> e3; }
+          //   → s-if-pipe(loc, [s-if-pipe-branch(c1, sblock(e1)), ...], false)
+          //   → s-if-pipe-else(loc, [...], sblock(e3), false)
+          // well-formed.arr requires bodies and _else to be s-block when blocky=false.
+          var k = node.kids;
+          var p = pos(node.pos);
+          var branches = [];
+          var elseExpr = null;
+          for (var i = 0; i < k.length; i++) {
+            var kid = k[i];
+            if (kid.name === 'ask-branch') {
+              // kids: [binop-expr, THINARROW, full-expr]
+              var bp   = pos(kid.pos);
+              var test = tr(kid.kids[0]);
+              var body = sblock(bp, [tr(kid.kids[2])]);
+              branches.push(RUNTIME.getField(ast, 's-if-pipe-branch')
+                .app(bp, test, body));
+            } else if (kid.name === 'otherwise-branch') {
+              // kids: [OTHERWISE, THINARROW, full-expr]
+              elseExpr = sblock(pos(kid.pos), [tr(kid.kids[2])]);
+            }
+          }
+          if (elseExpr === null) {
+            return RUNTIME.getField(ast, 's-if-pipe')
+              .app(p, makeList(branches), RUNTIME.makeBoolean(false));
+          }
+          return RUNTIME.getField(ast, 's-if-pipe-else')
+            .app(p, makeList(branches), elseExpr, RUNTIME.makeBoolean(false));
+        },
+
         'new-expr': function(node) {
           // new NAME(args)  →  NAME(args). The `new` keyword is sugar; the
           // result is identical to a bare constructor call.

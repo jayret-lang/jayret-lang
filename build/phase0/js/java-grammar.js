@@ -264,6 +264,17 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("prim-expr", [new Nonterm("construct-expr")])
   g.addRule("prim-expr", [new Nonterm("map-for-expr")])
   g.addRule("prim-expr", [new Nonterm("new-expr")])
+  g.addRule("prim-expr", [new Nonterm("ask-expr")])
+  g.addRule("ask-expr", [new Token("ASK"), new Token("LBRACE"), new Nonterm("ask-branch"), new Token("SEMI"), new Nonterm("ask-expr_A0_I4*"), new Token("RBRACE")])
+  g.addRule("ask-expr_A0_I4*", [], E.Rule.Inline);
+  g.addRule("ask-expr_A0_I4*", [new Nonterm("ask-expr_A0_I4*"), new Nonterm("ask-expr_A0_I4")], E.Rule.ListSnoc("ask-expr_A0_I4*", "ask-expr_A0_I4", true));
+  g.addRule("ask-expr_A0_I4", [new Nonterm("ask-branch"), new Token("SEMI")], E.Rule.Inline)
+  g.addRule("ask-expr", [new Token("ASK"), new Token("LBRACE"), new Nonterm("ask-branch"), new Token("SEMI"), new Nonterm("ask-expr_A1_I4*"), new Nonterm("otherwise-branch"), new Token("SEMI"), new Token("RBRACE")])
+  g.addRule("ask-expr_A1_I4*", [], E.Rule.Inline);
+  g.addRule("ask-expr_A1_I4*", [new Nonterm("ask-expr_A1_I4*"), new Nonterm("ask-expr_A1_I4")], E.Rule.ListSnoc("ask-expr_A1_I4*", "ask-expr_A1_I4", true));
+  g.addRule("ask-expr_A1_I4", [new Nonterm("ask-branch"), new Token("SEMI")], E.Rule.Inline)
+  g.addRule("ask-branch", [new Nonterm("binop-expr"), new Token("THINARROW"), new Nonterm("full-expr")])
+  g.addRule("otherwise-branch", [new Token("OTHERWISE"), new Token("THINARROW"), new Nonterm("full-expr")])
   g.addRule("new-expr", [new Token("NEW"), new Token("NAME"), new Token("PARENNOSPACE"), new Nonterm("new-expr_I3?"), new Token("RPAREN")])
   g.addRule("new-expr_I3?", [], E.Rule.Inline);
   g.addRule("new-expr_I3?", [new Nonterm("new-expr_I3")], E.Rule.Inline);
