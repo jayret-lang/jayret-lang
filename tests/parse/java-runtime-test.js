@@ -27,7 +27,10 @@ if (!fs.existsSync(OUT_DIR))      fs.mkdirSync(OUT_DIR, { recursive: true });
 if (!fs.existsSync(COMPILED_DIR)) fs.mkdirSync(COMPILED_DIR, { recursive: true });
 
 function compileAndRun(srcPath) {
-  var base = path.basename(srcPath, '.jrt');
+  // Disambiguate output filenames across subdirs (multi-module examples)
+  // so e.g. examples/jarret/multi/main.jrt doesn't clobber a sibling main.
+  var rel = path.relative(EX_DIR, srcPath);
+  var base = rel.replace(/\.jrt$/, '').replace(/[\/\\]/g, '_');
   var outPath = path.join(OUT_DIR, base + '.js');
   var args = [
     '-max-old-space-size=8192', PYRET,
@@ -47,20 +50,32 @@ function compileAndRun(srcPath) {
 }
 
 describe("Jarret end-to-end", function() {
-  var files = fs.readdirSync(EX_DIR).filter(function(f) { return f.endsWith('.jrt'); });
+  // Single-file examples: each *.jrt directly in examples/jarret/.
+  var singles = fs.readdirSync(EX_DIR)
+    .filter(function(f) { return f.endsWith('.jrt'); })
+    .map(function(f) { return { label: f, src: path.join(EX_DIR, f) }; });
 
-  files.forEach(function(fname) {
-    it("runs " + fname + " and all @Check blocks pass", function() {
-      var r = compileAndRun(path.join(EX_DIR, fname));
+  // Multi-module examples: subdirectories of examples/jarret/, each with
+  // a main.jrt entry point that imports siblings.
+  var multis = fs.readdirSync(EX_DIR)
+    .filter(function(d) { return fs.statSync(path.join(EX_DIR, d)).isDirectory(); })
+    .map(function(d) {
+      return { label: d + '/main.jrt', src: path.join(EX_DIR, d, 'main.jrt') };
+    })
+    .filter(function(e) { return fs.existsSync(e.src); });
+
+  [].concat(singles, multis).forEach(function(e) {
+    it("runs " + e.label + " and all @Check blocks pass", function() {
+      var r = compileAndRun(e.src);
       if (r.compileFailed) {
-        fail(fname + ": compile failed\n" + (r.stderr || r.stdout));
+        fail(e.label + ": compile failed\n" + (r.stderr || r.stdout));
         return;
       }
       // The Pyret check-runner prints "Looks shipshape" when every test
       // in every check block passes.
       var ok = /Looks shipshape/.test(r.stdout);
       if (!ok) {
-        fail(fname + ": tests did not all pass\n--stdout--\n" + r.stdout +
+        fail(e.label + ": tests did not all pass\n--stdout--\n" + r.stdout +
              "\n--stderr--\n" + r.stderr);
         return;
       }

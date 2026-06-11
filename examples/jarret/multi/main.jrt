@@ -1,0 +1,18 @@
+// main.jrt - imports math-utils.jrt (a sibling .jrt file) and exercises
+// its exported functions, data constructor, and type, accessed as M.foo
+// via the explicit alias.
+
+import file("math-utils.jrt") as M;
+
+@Check void testFunctions() {
+    assertEquals(M.sq(5), 25);
+    assertEquals(M.sq(0), 0);
+    assertEquals(M.cube(3), 27);
+    assertEquals(M.cube(-2), -8);
+}
+
+@Check void testDataAndDist() {
+    assertEquals(M.dist(M.Pt(0, 0), M.Pt(3, 4)), 5);
+    assertEquals(M.dist(M.Pt(0, 0), M.Pt(0, 0)), 0);
+    assertEquals(M.dist(M.Pt(1, 1), M.Pt(4, 5)), 5);
+}

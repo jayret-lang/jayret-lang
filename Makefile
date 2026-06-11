@@ -238,7 +238,12 @@ TEST_BUILD=$(NODE) $(PYRET_TEST_PHASE)/pyret.jarr \
 test-all: test
 
 .PHONY : test
-test: pyret-test type-check-test pyret-io-test jsnums-test
+test: pyret-test type-check-test pyret-io-test jsnums-test jarret-test
+
+# Umbrella for all Jarret-related test suites: the BNF parser, the
+# Jarret-AST-to-Pyret-AST translator (unit), and end-to-end compile+run.
+.PHONY : jarret-test
+jarret-test: java-parse-test java-translate-test java-runtime-test
 
 .PHONY : parse-test
 parse-test: tests/parse/parse.js build/phaseA/js/pyret-tokenizer.js build/phaseA/js/pyret-parser.js

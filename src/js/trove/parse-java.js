@@ -308,11 +308,15 @@
             .map(function(k) { return trStmt(k, pos(topBlock.pos)); });
 
           var body = sblock(pos(topBlock.pos), topStmts.length > 0 ? topStmts : [sid(pos(topBlock.pos), "nothing")]);
-          var provideNone    = RUNTIME.getField(ast, 's-provide-none').app(pos(node.pos));
-          var provideTypNone = RUNTIME.getField(ast, 's-provide-types-none').app(pos(node.pos));
+          // Jarret defaults to `provide *`: top-level functions, vars, and data
+          // are exported. There's no `public` modifier yet; modules either
+          // expose everything or nothing, and we choose everything to match
+          // typical Java/Pyret expectations for multi-module programs.
+          var provideAll    = RUNTIME.getField(ast, 's-provide-all').app(pos(node.pos));
+          var provideTypAll = RUNTIME.getField(ast, 's-provide-types-all').app(pos(node.pos));
 
           return RUNTIME.getField(ast, 's-program')
-            .app(pos(node.pos), snone(), provideNone, provideTypNone,
+            .app(pos(node.pos), snone(), provideAll, provideTypAll,
                  empty, makeList(imports), body);
         },
 
@@ -327,15 +331,23 @@
               return RUNTIME.getField(ast, 's-import')
                 .app(p, imp, sname(k[1]));
             } else if (k[2].name === 'PARENNOSPACE') {
-              // import NAME(STRING); — file import
+              // import NAME(STRING) [as NAME]; — file import, optional alias
               var kind = k[1].value;  // "file"
               var arg  = k[3].value.slice(1, -1);  // strip quotes
               var imp  = RUNTIME.getField(ast, 's-special-import')
                 .app(p, RUNTIME.makeString(kind), makeList([RUNTIME.makeString(arg)]));
-              // Derive module name from filename without extension
-              var modName = arg.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
-              return RUNTIME.getField(ast, 's-import')
-                .app(p, imp, RUNTIME.getField(ast, 's-name').app(p, RUNTIME.makeString(modName)));
+              var aliasName;
+              if (k[5] && k[5].name === 'AS') {
+                // explicit `as NAME` after the file(STRING) form
+                aliasName = RUNTIME.getField(ast, 's-name')
+                  .app(p, RUNTIME.makeString(k[6].value));
+              } else {
+                // Derive module name from filename without extension
+                var modName = arg.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
+                aliasName = RUNTIME.getField(ast, 's-name')
+                  .app(p, RUNTIME.makeString(modName));
+              }
+              return RUNTIME.getField(ast, 's-import').app(p, imp, aliasName);
             } else if (k[2].name === 'AS') {
               // import NAME as NAME;
               var imp = RUNTIME.getField(ast, 's-const-import')

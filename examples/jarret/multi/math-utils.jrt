@@ -1,0 +1,20 @@
+// math-utils.jrt - exported helpers for use by other Jarret modules.
+// Jarret defaults to `provide *`, so every top-level binding here is
+// available to importers without any explicit `provide` clause.
+
+int sq(int n) { return n * n; }
+int cube(int n) { return n * n * n; }
+
+data Point {
+    Pt(double x, double y);
+}
+
+double dist(Point p1, Point p2) {
+    return switch (p1) {
+        case Pt(x1, y1): yield switch (p2) {
+            case Pt(x2, y2): yield num-sqrt(
+                (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)
+            );
+        };
+    };
+}
