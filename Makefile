@@ -252,11 +252,11 @@ java-parse-test: tests/parse/java-parse.js build/phase0/js/java-tokenizer.js bui
 java-translate-test: tests/parse/java-translate-test.js src/js/trove/parse-java.js build/phase0/js/java-tokenizer.js build/phase0/js/java-parser.js
 	cd tests/parse/ && PHASE=build/phase0 $(NODE) java-translate-test.js
 
-# End-to-end runtime test: compile each examples/jarret/*.jarr via phaseA
+# End-to-end runtime test: compile each examples/jarret/*.jrt via phaseA
 # pyret and verify all @Check blocks pass. Slower than the translate test
 # because it boots the full Pyret pipeline per example.
 .PHONY : java-runtime-test
-java-runtime-test: tests/parse/java-runtime-test.js $(PHASEA)/pyret.jarr $(wildcard examples/jarret/*.jarr)
+java-runtime-test: tests/parse/java-runtime-test.js $(PHASEA)/pyret.jarr $(wildcard examples/jarret/*.jrt)
 	$(NODE) tests/parse/java-runtime-test.js
 
 TEST_FILES := $(wildcard tests/pyret/tests/*.arr)

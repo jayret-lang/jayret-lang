@@ -70,7 +70,7 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
     var srcText = fs.readFileSync(path.join(__dirname, '../../src/js/trove/parse-java.js'), 'utf8');
     var factory = eval('(' + srcText + ')');
     var mod = factory.theModule(RT, {}, "test", RT._srclocLib, RT._astLib, RT._listsLib, T, G);
-    return mod.values["surface-parse"].app(src, "test.jarr");
+    return mod.values["surface-parse"].app(src, "test.jrt");
   }
 
   describe("Jarret AST translator", function() {
@@ -144,7 +144,7 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
 
     it("should translate all 7 example programs", function() {
       var exDir = path.join(__dirname, '../../examples/jarret');
-      var files = fs.readdirSync(exDir).filter(function(f) { return f.endsWith('.jarr'); });
+      var files = fs.readdirSync(exDir).filter(function(f) { return f.endsWith('.jrt'); });
       files.forEach(function(fname) {
         var src = fs.readFileSync(path.join(exDir, fname), 'utf8');
         var result;

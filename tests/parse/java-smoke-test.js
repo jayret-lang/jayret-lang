@@ -13,7 +13,7 @@ R.config({
   }
 });
 R(['pyret-base/js/java-tokenizer', 'pyret-base/js/java-parser'], function(T, G) {
-  const examples = fs.readdirSync('../../examples/jarret').filter(f => f.endsWith('.jarr'));
+  const examples = fs.readdirSync('../../examples/jarret').filter(f => f.endsWith('.jrt'));
   let pass = 0, fail = 0;
   examples.forEach(function(fname) {
     const src = fs.readFileSync('../../examples/jarret/' + fname, 'utf8');

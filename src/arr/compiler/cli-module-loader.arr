@@ -196,13 +196,13 @@ fun get-cached-if-available-known-mtimes(basedir, loc, max-dep-times) block:
   end
 end
 
-fun ends-with-jarr(p :: String) -> Boolean:
+fun ends-with-jrt(p :: String) -> Boolean:
   len = string-length(p)
-  (len >= 5) and (string-substring(p, len - 5, len) == ".jarr")
+  (len >= 4) and (string-substring(p, len - 4, len) == ".jrt")
 end
 
 fun get-file-locator(basedir, real-path):
-  loc = if ends-with-jarr(real-path):
+  loc = if ends-with-jrt(real-path):
     JFL.java-file-locator(real-path, CS.standard-globals)
   else:
     FL.file-locator(real-path, CS.standard-globals)
@@ -389,7 +389,7 @@ fun module-finder(ctxt :: CLIContext, dep :: CS.Dependency):
         real-path = get-real-path(clp, args.get(0))
         new-context = ctxt.{current-load-path: Filesystem.dirname(real-path)}
         if Filesystem.exists(real-path):
-          loc = if ends-with-jarr(real-path):
+          loc = if ends-with-jrt(real-path):
             JFL.java-file-locator(real-path, CS.standard-globals)
           else:
             FL.file-locator(real-path, CS.standard-globals)

@@ -1,4 +1,4 @@
-// shapes.jarr - Algebraic data types and pattern matching
+// shapes.jrt - Algebraic data types and pattern matching
 
 data Shape {
     Circle(double radius);

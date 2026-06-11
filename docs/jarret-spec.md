@@ -8,7 +8,7 @@ expression-oriented evaluation, and built-in testing.
 The goal is to let students already comfortable with Java work in a Pyret-semantics environment,
 then transition to real Java with minimal friction.
 
-File extension: **`.jarr`**
+File extension: **`.jrt`**
 
 ---
 
@@ -38,7 +38,7 @@ A Jarret file is a sequence of top-level declarations and expressions, executed 
 There are no mandatory class or `main` wrappers.
 
 ```java
-// hello.jarr
+// hello.jrt
 String greeting = "Hello, world!";
 print(greeting)
 ```
@@ -62,8 +62,8 @@ statement separator when semicolons are omitted.
 ```java
 import lists;                    // import lists as lists
 import lists as L;               // import lists as L
-import file("utils.jarr");       // import file("utils.jarr") as utils
-import file("utils.jarr") as U;  // import file("utils.jarr") as U
+import file("utils.jrt");        // import file("utils.jrt") as utils
+import file("utils.jrt") as U;   // import file("utils.jrt") as U
 ```
 
 Pyret's `include` form is available as:

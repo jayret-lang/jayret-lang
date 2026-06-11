@@ -1,4 +1,4 @@
-// factorial.jarr - Recursive functions and return lifting
+// factorial.jrt - Recursive functions and return lifting
 
 // Tier-1 return: tail return, stripped directly
 int factorial(int n) {

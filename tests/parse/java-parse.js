@@ -42,7 +42,7 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
     describe("example programs", function() {
       var examplesDir = "../../examples/jarret";
       var examples = fs.readdirSync(examplesDir).filter(function(f) {
-        return f.endsWith(".jarr");
+        return f.endsWith(".jrt");
       });
       examples.forEach(function(fname) {
         it("should parse " + fname, function() {
@@ -189,7 +189,7 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
         parsesOk("import lists; void f() { }");
       });
       it("should parse a file import", function() {
-        parsesOk("import file(\"other.jarr\"); void f() { }");
+        parsesOk("import file(\"other.jrt\"); void f() { }");
       });
     });
 

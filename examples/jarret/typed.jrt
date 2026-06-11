@@ -1,4 +1,4 @@
-// typed.jarr - Full type annotations on all definitions
+// typed.jrt - Full type annotations on all definitions
 
 // All parameters and return types annotated
 int add(int x, int y) {

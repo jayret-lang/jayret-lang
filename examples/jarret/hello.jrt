@@ -1,4 +1,4 @@
-// hello.jarr - Basic arithmetic and printing
+// hello.jrt - Basic arithmetic and printing
 
 String greeting = "Hello, Jarret!";
 print(greeting)

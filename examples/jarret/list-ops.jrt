@@ -1,4 +1,4 @@
-// list-ops.jarr - For-each, lambdas, and higher-order functions
+// list-ops.jrt - For-each, lambdas, and higher-order functions
 // (Pyret auto-imports `lists` and many of its functions, so no import needed.)
 
 // Map: produce a new list by applying a function to each element

@@ -1,7 +1,7 @@
 /**
  * End-to-end runtime test for Jarret example programs.
  *
- * For each examples/jarret/*.jarr file:
+ * For each examples/jarret/*.jrt file:
  *   1. Compile it via build/phaseA/pyret.jarr
  *   2. Run the compiled JS bundle with node
  *   3. Verify the output contains "Looks shipshape" (= all @Check tests passed)
@@ -27,7 +27,7 @@ if (!fs.existsSync(OUT_DIR))      fs.mkdirSync(OUT_DIR, { recursive: true });
 if (!fs.existsSync(COMPILED_DIR)) fs.mkdirSync(COMPILED_DIR, { recursive: true });
 
 function compileAndRun(srcPath) {
-  var base = path.basename(srcPath, '.jarr');
+  var base = path.basename(srcPath, '.jrt');
   var outPath = path.join(OUT_DIR, base + '.js');
   var args = [
     '-max-old-space-size=8192', PYRET,
@@ -47,7 +47,7 @@ function compileAndRun(srcPath) {
 }
 
 describe("Jarret end-to-end", function() {
-  var files = fs.readdirSync(EX_DIR).filter(function(f) { return f.endsWith('.jarr'); });
+  var files = fs.readdirSync(EX_DIR).filter(function(f) { return f.endsWith('.jrt'); });
 
   files.forEach(function(fname) {
     it("runs " + fname + " and all @Check blocks pass", function() {

@@ -1,4 +1,4 @@
-// guards.jarr - Tier-2 return lifting with guard clauses
+// guards.jrt - Tier-2 return lifting with guard clauses
 
 // Single guard clause
 String classify(int n) {

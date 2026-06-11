@@ -1,4 +1,4 @@
-// checks.jarr - @Check blocks exercising all assertion forms
+// checks.jrt - @Check blocks exercising all assertion forms
 
 int square(int n) { return n * n; }
 int neg(int n) { return 0 - n; }
