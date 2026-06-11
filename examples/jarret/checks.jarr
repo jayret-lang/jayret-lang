@@ -22,7 +22,7 @@ int neg(int n) { return 0 - n; }
 }
 
 @Check void testRaises() {
-    assertRaises(() -> 1 / 0, "Division by zero");
+    assertRaises(() -> 1 / 0, "division by zero");
 }
 
 // Anonymous check block
