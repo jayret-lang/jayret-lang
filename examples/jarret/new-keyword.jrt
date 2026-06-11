@@ -1,0 +1,27 @@
+// new-keyword.jrt - Java-style `new ClassName(args)` constructor calls.
+//
+// In Pyret, data variants are constructed by calling the variant as a
+// function: `Circle(3)`. Java programmers typically write `new Circle(3)`.
+// Jarret accepts both spellings; the `new` is pure syntactic sugar.
+
+data Shape {
+    Circle(double r);
+    Square(double side);
+}
+
+double area(Shape s) {
+    return switch (s) {
+        case Circle(r): yield r * r * 3.14159265;
+        case Square(side): yield side * side;
+    };
+}
+
+@Check void testNew() {
+    // Bare constructor call (Pyret-style)
+    assertEquals(area(Circle(2)), 2 * 2 * 3.14159265);
+    // `new` keyword (Java-style); same result
+    assertEquals(area(new Circle(2)), 2 * 2 * 3.14159265);
+    assertEquals(area(new Square(5)), 25);
+    // Mixed: nested `new` inside arithmetic
+    assertEquals(area(new Square(1 + 2)), 9);
+}

@@ -169,6 +169,12 @@ prim-expr: NUMBER
          | switch-expr
          | construct-expr
          | map-for-expr
+         | new-expr
+
+# `new ClassName(args)` is accepted as sugar for `ClassName(args)` to
+# accommodate Java muscle memory. The `new` keyword is purely syntactic;
+# the translator strips it.
+new-expr: NEW NAME PARENNOSPACE [full-expr (COMMA full-expr)*] RPAREN
 
 # Pyret-style list/construct literal: [list: 1, 2, 3]
 construct-expr: LBRACK NAME COLON [full-expr (COMMA full-expr)*] RBRACK

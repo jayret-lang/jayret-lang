@@ -314,6 +314,15 @@ data Direction {
 }
 ```
 
+### Constructor calls: bare or `new`
+
+Both spellings produce the same value; `new` is pure syntactic sugar for Java muscle memory.
+
+```java
+Shape s1 = Circle(3);          // Pyret-style
+Shape s2 = new Circle(3);      // Java-style; identical to s1
+```
+
 ### Shared methods (deferred)
 
 Pyret's `sharing:` block for methods shared across all variants is deferred to a later release.
@@ -544,7 +553,6 @@ The following Pyret features have no Jarret syntax yet and are planned for futur
 | Refinement type annotations | `pred-ann` | Use dynamic checks for now |
 | `provide` / `provide-types` | `provide` | Top-level definitions are implicitly `provide *`; finer-grained control deferred |
 | Mid-loop `return` | _(requires CPS)_ | Use if/else; see §14 Tier 3 |
-| `new ClassName(...)` | _(constructor call)_ | Use `ClassName(...)` directly |
 
 ---
 

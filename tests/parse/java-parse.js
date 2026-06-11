@@ -205,6 +205,21 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("new keyword", function() {
+      it("should parse new with no args", function() {
+        parsesOk("data D { Empty(); } void f() { Shape x = new Empty(); }");
+      });
+      it("should parse new with args", function() {
+        parsesOk("data D { C(int r); } void f() { D x = new C(5); }");
+      });
+      it("should parse new with multiple args", function() {
+        parsesOk("data D { R(int w, int h); } void f() { D x = new R(3, 4); }");
+      });
+      it("should allow new inside arithmetic / nested expressions", function() {
+        parsesOk("data D { C(int n); } int f() { return n(new C(1 + 2)); }");
+      });
+    });
+
     describe("rejected programs", function() {
       it("should reject a bare keyword as an expression", function() {
         parseFails("return;");  // return outside a function

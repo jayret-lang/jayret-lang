@@ -678,6 +678,20 @@
           }
         },
 
+        'new-expr': function(node) {
+          // new NAME(args)  →  NAME(args). The `new` keyword is sugar; the
+          // result is identical to a bare constructor call.
+          // kids: [NEW, NAME, PARENNOSPACE, full-expr*, RPAREN]
+          var k = node.kids;
+          var p = pos(node.pos);
+          var fnName = k[1].value;
+          var args = [];
+          for (var i = 3; i < k.length - 1; i++) {
+            if (k[i].name === 'full-expr') args.push(tr(k[i]));
+          }
+          return sapp(p, sid(pos(k[1].pos), fnName), args);
+        },
+
         'construct-expr': function(node) {
           var k = node.kids;
           var p = pos(node.pos);

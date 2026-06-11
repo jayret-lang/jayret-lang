@@ -263,6 +263,14 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("prim-expr", [new Nonterm("switch-expr")])
   g.addRule("prim-expr", [new Nonterm("construct-expr")])
   g.addRule("prim-expr", [new Nonterm("map-for-expr")])
+  g.addRule("prim-expr", [new Nonterm("new-expr")])
+  g.addRule("new-expr", [new Token("NEW"), new Token("NAME"), new Token("PARENNOSPACE"), new Nonterm("new-expr_I3?"), new Token("RPAREN")])
+  g.addRule("new-expr_I3?", [], E.Rule.Inline);
+  g.addRule("new-expr_I3?", [new Nonterm("new-expr_I3")], E.Rule.Inline);
+  g.addRule("new-expr_I3", [new Nonterm("full-expr"), new Nonterm("new-expr_I3_I1*")], E.Rule.Inline)
+  g.addRule("new-expr_I3_I1*", [], E.Rule.Inline);
+  g.addRule("new-expr_I3_I1*", [new Nonterm("new-expr_I3_I1*"), new Nonterm("new-expr_I3_I1")], E.Rule.ListSnoc("new-expr_I3_I1*", "new-expr_I3_I1", true));
+  g.addRule("new-expr_I3_I1", [new Token("COMMA"), new Nonterm("full-expr")], E.Rule.Inline)
   g.addRule("construct-expr", [new Token("LBRACK"), new Token("NAME"), new Token("COLON"), new Nonterm("construct-expr_A0_I3?"), new Token("RBRACK")])
   g.addRule("construct-expr_A0_I3?", [], E.Rule.Inline);
   g.addRule("construct-expr_A0_I3?", [new Nonterm("construct-expr_A0_I3")], E.Rule.Inline);
