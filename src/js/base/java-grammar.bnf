@@ -21,6 +21,7 @@ top-stmt: fun-decl
         | check-block
         | let-stmt
         | var-stmt
+        | rec-stmt
         | assign-stmt
         | expr-stmt
 
@@ -34,6 +35,7 @@ block-stmt: fun-decl
           | return-stmt
           | let-stmt
           | var-stmt
+          | rec-stmt
           | assign-stmt
           | yield-stmt
           | spy-stmt
@@ -87,6 +89,13 @@ return-stmt: RETURN full-expr SEMI
 let-stmt: type-ann NAME EQUALS full-expr [SEMI]
 
 var-stmt: VAR type-ann NAME EQUALS full-expr [SEMI]
+
+# Recursive binding: the RHS may reference the LHS by name (typically
+# under a lambda or other delayed-evaluation context). Used to build
+# cyclic data structures, e.g. `rec Tree t = node(() -> t);`. Distinct
+# from `var` (which is mutable) and `int x =` (which is immutable but
+# non-recursive).
+rec-stmt: REC type-ann NAME EQUALS full-expr [SEMI]
 
 assign-stmt: NAME COLONEQUALS full-expr [SEMI]
 

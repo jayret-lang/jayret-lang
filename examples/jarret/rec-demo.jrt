@@ -1,0 +1,50 @@
+// rec-demo.jrt - `rec` bindings for cyclic / self-referential values.
+//
+// A plain `int x = ...;` binding evaluates its right-hand side first
+// and then binds `x`, so the RHS cannot mention `x`. `rec` allows the
+// RHS to refer to the binding being defined, as long as the reference
+// is under a lambda (i.e. delayed evaluation). This is how DCIC builds
+// cyclic graph nodes.
+
+// A lazy binary tree where each subtree is a thunk. The `Leaf` thunks
+// stand in as sentinels; a real implementation would use a separate
+// constructor.
+data Tree {
+    Node(int val, (-> Tree) left, (-> Tree) right);
+    Leaf;
+}
+
+int sum-depth(Tree t, int depth) {
+    if (depth == 0) { return 0; }
+    return switch (t) {
+        case Leaf: yield 0;
+        case Node(v, l, r):
+            yield v + sum-depth(l(), depth - 1) + sum-depth(r(), depth - 1);
+    };
+}
+
+// A self-cycle: `rec` lets the body close over `loopy` itself.
+rec Tree loopy = Node(42, () -> loopy, () -> loopy);
+
+// Mutually-cyclic pair via two `rec` bindings. `a()` returns the b-node,
+// `b()` returns the a-node.
+rec Tree a = Node(1, () -> b, () -> b);
+rec Tree b = Node(2, () -> a, () -> a);
+
+@Check void testLoopy() {
+    // Walking `loopy` to depth 3 sums 42 + 2*42 + 4*42 = 42 * 7
+    assertEquals(sum-depth(loopy, 3), 42 * 7);
+    // Depth 0 short-circuits regardless of cycles
+    assertEquals(sum-depth(loopy, 0), 0);
+}
+
+@Check void testMutual() {
+    // From `a` (val=1): visit 1, then both children are `b` (val=2),
+    // then their children are both `a` (val=1)
+    // depth=1: just 1
+    // depth=2: 1 + 2 + 2 = 5
+    // depth=3: 1 + (2 + 1 + 1) + (2 + 1 + 1) = 1 + 4 + 4 = 9
+    assertEquals(sum-depth(a, 1), 1);
+    assertEquals(sum-depth(a, 2), 5);
+    assertEquals(sum-depth(a, 3), 9);
+}

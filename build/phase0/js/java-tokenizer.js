@@ -106,6 +106,7 @@ define("pyret-base/js/java-tokenizer", ["jglr/jglr"], function(E) {
     {name: "BREAK",   val: "break",   parenIsForExp: true},
     // Declarations
     {name: "VAR",     val: "var",     parenIsForExp: true},
+    {name: "REC",     val: "rec",     parenIsForExp: true},
     {name: "DATA",    val: "data",    parenIsForExp: true},
     {name: "NEW",     val: "new",     parenIsForExp: true},
     // Module system

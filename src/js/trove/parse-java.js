@@ -438,6 +438,16 @@
           return RUNTIME.getField(ast, 's-var').app(p, bind, val);
         },
 
+        'rec-stmt': function(node) {
+          var k = node.kids;
+          var p = pos(node.pos);
+          // [REC, type-ann, NAME, EQUALS, full-expr, SEMI]
+          var ann  = trTypeAnn(k[1]);
+          var bind = sbind(p, k[2], ann);
+          var val  = tr(k[4]);
+          return RUNTIME.getField(ast, 's-rec').app(p, bind, val);
+        },
+
         'assign-stmt': function(node) {
           var k = node.kids;
           var p = pos(node.pos);

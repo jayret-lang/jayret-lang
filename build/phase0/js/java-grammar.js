@@ -30,6 +30,7 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("top-stmt", [new Nonterm("check-block")])
   g.addRule("top-stmt", [new Nonterm("let-stmt")])
   g.addRule("top-stmt", [new Nonterm("var-stmt")])
+  g.addRule("top-stmt", [new Nonterm("rec-stmt")])
   g.addRule("top-stmt", [new Nonterm("assign-stmt")])
   g.addRule("top-stmt", [new Nonterm("expr-stmt")])
   g.addRule("block", [new Token("LBRACE"), new Nonterm("block_I1*"), new Token("RBRACE")])
@@ -44,6 +45,7 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("block-stmt", [new Nonterm("return-stmt")])
   g.addRule("block-stmt", [new Nonterm("let-stmt")])
   g.addRule("block-stmt", [new Nonterm("var-stmt")])
+  g.addRule("block-stmt", [new Nonterm("rec-stmt")])
   g.addRule("block-stmt", [new Nonterm("assign-stmt")])
   g.addRule("block-stmt", [new Nonterm("yield-stmt")])
   g.addRule("block-stmt", [new Nonterm("spy-stmt")])
@@ -122,6 +124,10 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("var-stmt_I5?", [], E.Rule.Inline);
   g.addRule("var-stmt_I5?", [new Nonterm("var-stmt_I5")], E.Rule.Inline);
   g.addRule("var-stmt_I5", [new Token("SEMI")], E.Rule.Inline)
+  g.addRule("rec-stmt", [new Token("REC"), new Nonterm("type-ann"), new Token("NAME"), new Token("EQUALS"), new Nonterm("full-expr"), new Nonterm("rec-stmt_I5?")])
+  g.addRule("rec-stmt_I5?", [], E.Rule.Inline);
+  g.addRule("rec-stmt_I5?", [new Nonterm("rec-stmt_I5")], E.Rule.Inline);
+  g.addRule("rec-stmt_I5", [new Token("SEMI")], E.Rule.Inline)
   g.addRule("assign-stmt", [new Token("NAME"), new Token("COLONEQUALS"), new Nonterm("full-expr"), new Nonterm("assign-stmt_I3?")])
   g.addRule("assign-stmt_I3?", [], E.Rule.Inline);
   g.addRule("assign-stmt_I3?", [new Nonterm("assign-stmt_I3")], E.Rule.Inline);

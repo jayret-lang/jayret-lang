@@ -141,6 +141,27 @@ Equivalent Pyret: `count := count + 1`
 > **Note**: Assigning to an immutable binding is a runtime error in Pyret (and a well-formedness
 > error in the Pyret compiler), just as in Jarret.
 
+### Recursive binding (`rec`) — for cyclic data
+
+A plain `int x = ...;` cannot mention `x` on the right-hand side; the RHS is
+evaluated before the name is bound. `rec` allows the RHS to refer to the
+binding being defined, as long as the reference is under a lambda (or other
+delayed-evaluation context). This is how cyclic data structures (graphs,
+self-referential lazy trees) are built.
+
+```java
+data Tree { Node(int v, (-> Tree) k); Leaf; }
+rec Tree self = Node(42, () -> self);      // self-cycle
+
+rec Tree a = Node(1, () -> b);             // mutually recursive
+rec Tree b = Node(2, () -> a);
+```
+
+Equivalent Pyret: `rec self = node(42, lam(): self end)` and the parallel form.
+
+`rec` is allowed at top level and inside function/block bodies. The type
+annotation is mandatory (same as `int x = ...` and `var int x = ...`).
+
 ---
 
 ## 6. Functions

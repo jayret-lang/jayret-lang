@@ -205,6 +205,21 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("rec bindings", function() {
+      it("should parse a simple rec at top level", function() {
+        parsesOk("data T { N(int v, (-> T) k); Leaf; } rec T self = N(1, () -> self);");
+      });
+      it("should parse rec inside a function body", function() {
+        parsesOk("data T { N(int v, (-> T) k); Leaf; } void f() { rec T self = N(1, () -> self); }");
+      });
+      it("should parse two mutually-recursive rec bindings", function() {
+        parsesOk("data T { N(int v, (-> T) k); Leaf; } rec T a = N(1, () -> b); rec T b = N(2, () -> a);");
+      });
+      it("should reject rec without type annotation", function() {
+        parseFails("data T { N(int v, (-> T) k); Leaf; } rec self = N(1, () -> self);");
+      });
+    });
+
     describe("records", function() {
       it("should parse a single-field record", function() {
         parsesOk("void f() { Object o = {x: 1}; }");
