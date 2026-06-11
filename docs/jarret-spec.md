@@ -423,9 +423,26 @@ table: name :: String, pop :: Number
 end
 ```
 
-Column operations (`sieve`, `order`, `extend`, `select`) and external loaders
-(`load-table`) are deferred; use the `tables` module's functions and method
-calls on the table value for now.
+#### sieve (filter rows by predicate)
+
+`sieve t using c1, c2 { predicate; }` keeps only the rows where the body
+expression evaluates true. The column names listed after `using` are brought
+into scope inside the braces and refer to that row's value in the
+corresponding column. This is *not* a regular lambda capture -- it's a
+table-specific binding form that lets you write `age > 25` rather than
+`row.get-value("age") > 25`.
+
+```java
+Table seniors = sieve employees using age { age >= 30; };
+Table targets = sieve employees using age, salary {
+    (age < 35) && (salary >= 60000);
+};
+```
+
+Equivalent Pyret: `sieve t using age: age >= 30 end`.
+
+The other column-scoped ops (`order`, `extend`, `select`, `extract`) and the
+external `load-table` form are still deferred.
 
 ---
 
@@ -666,7 +683,7 @@ The following Pyret features have no Jarret syntax yet and are planned for futur
 
 | Feature | Pyret construct | Notes |
 |---------|----------------|-------|
-| `load-table` / table operations | `load-table:` / `sieve`/`order`/`extend` | Literal `table { ... }` is supported; loaders and column ops are deferred |
+| `load-table` / remaining column ops | `load-table:` / `order` / `extend` / `select` / `extract` | Literal `table { ... }` and `sieve` are supported; the rest are deferred |
 | Reactors | `reactor:` | Domain-specific; deferred |
 | `while` loops | _(none in Pyret)_ | Deferred; use recursion |
 | `sharing:` on data | `sharing:` | Deferred |

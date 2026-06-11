@@ -1,0 +1,45 @@
+// sieve-demo.jrt - `sieve` table operation.
+//
+// `sieve t using col1, col2 { predicate; }` keeps only the rows of
+// table `t` whose `predicate` is true. The column names listed after
+// `using` are brought into scope inside the body and refer to that
+// row's value in the corresponding column. Mirrors Pyret's
+// `sieve t using col1, col2: predicate end`.
+
+Table employees = table {
+    String name, int age, double salary;
+    row: "Alice",   30, 75000;
+    row: "Bob",     25, 50000;
+    row: "Carol",   45, 90000;
+    row: "Dave",    28, 60000;
+    row: "Eve",     55, 110000;
+};
+
+// Single-column filter.
+Table seniors = sieve employees using age { age >= 30; };
+
+// Multi-column filter.
+Table wellPaidYoungish = sieve employees using age, salary {
+    (age < 35) && (salary >= 60000);
+};
+
+@Check void testSeniors() {
+    assertEquals(seniors.length(), 3);
+    // The order is preserved.
+    assertEquals(seniors.row-n(0).get-value("name"), "Alice");
+    assertEquals(seniors.row-n(1).get-value("name"), "Carol");
+    assertEquals(seniors.row-n(2).get-value("name"), "Eve");
+}
+
+@Check void testMultiColumn() {
+    // Age < 35 AND salary >= 60000: Alice (30, 75000) and Dave (28, 60000).
+    assertEquals(wellPaidYoungish.length(), 2);
+    assertEquals(wellPaidYoungish.row-n(0).get-value("name"), "Alice");
+    assertEquals(wellPaidYoungish.row-n(1).get-value("name"), "Dave");
+}
+
+@Check void testNonMatching() {
+    // No one is older than 100.
+    Table noElders = sieve employees using age { age > 100; };
+    assertEquals(noElders.length(), 0);
+}

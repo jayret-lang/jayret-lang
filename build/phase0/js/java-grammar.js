@@ -274,6 +274,14 @@ R(['fs', 'jglr/jglr'], function(fs, E) {
   g.addRule("prim-expr", [new Nonterm("table-expr")])
   g.addRule("prim-expr", [new Nonterm("record-expr")])
   g.addRule("prim-expr", [new Nonterm("block-expr")])
+  g.addRule("prim-expr", [new Nonterm("sieve-expr")])
+  g.addRule("sieve-expr", [new Token("SIEVE"), new Nonterm("full-expr"), new Token("USING"), new Token("NAME"), new Nonterm("sieve-expr_I4*"), new Token("LBRACE"), new Nonterm("sieve-expr_I6*"), new Token("RBRACE")])
+  g.addRule("sieve-expr_I4*", [], E.Rule.Inline);
+  g.addRule("sieve-expr_I4*", [new Nonterm("sieve-expr_I4*"), new Nonterm("sieve-expr_I4")], E.Rule.ListSnoc("sieve-expr_I4*", "sieve-expr_I4", true));
+  g.addRule("sieve-expr_I4", [new Token("COMMA"), new Token("NAME")], E.Rule.Inline)
+  g.addRule("sieve-expr_I6*", [], E.Rule.Inline);
+  g.addRule("sieve-expr_I6*", [new Nonterm("sieve-expr_I6*"), new Nonterm("sieve-expr_I6")], E.Rule.ListSnoc("sieve-expr_I6*", "sieve-expr_I6", true));
+  g.addRule("sieve-expr_I6", [new Nonterm("block-stmt")], E.Rule.Inline)
   g.addRule("block-expr", [new Token("BLOCK"), new Token("LBRACE"), new Nonterm("block-expr_I2*"), new Token("RBRACE")])
   g.addRule("block-expr_I2*", [], E.Rule.Inline);
   g.addRule("block-expr_I2*", [new Nonterm("block-expr_I2*"), new Nonterm("block-expr_I2")], E.Rule.ListSnoc("block-expr_I2*", "block-expr_I2", true));

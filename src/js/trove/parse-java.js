@@ -692,6 +692,39 @@
           }
         },
 
+        'sieve-expr': function(node) {
+          // sieve t using c1, c2 { body }
+          //   → s-table-filter(p, s-column-binds(p, [bind(c1), bind(c2)], t), body)
+          // The column names are brought into scope inside the body as
+          // refs to the row's value in the corresponding column. The
+          // compiler handles the column-lookup mechanics.
+          var k = node.kids;
+          var p = pos(node.pos);
+          var tableExpr = tr(k[1]);
+          // Walk from k[3] (first NAME after USING) collecting column
+          // names until we hit LBRACE.
+          var colBinds = [];
+          var i = 3;
+          while (i < k.length && k[i].name !== 'LBRACE') {
+            if (k[i].name === 'NAME') {
+              colBinds.push(sbind(pos(k[i].pos), k[i], sblank()));
+            }
+            i++;
+          }
+          // Body: block contents → predicate expression
+          var blockStmts = [];
+          for (; i < k.length; i++) {
+            if (k[i].name === 'block-stmt') blockStmts.push(unwrapStmt(k[i]));
+          }
+          var predicate = blockStmts.length === 0
+            ? sid(p, "true")
+            : liftReturns(blockStmts, p);
+          var columnBinds = RUNTIME.getField(ast, 's-column-binds')
+            .app(p, makeList(colBinds), tableExpr);
+          return RUNTIME.getField(ast, 's-table-filter')
+            .app(p, columnBinds, predicate);
+        },
+
         'block-expr': function(node) {
           // block { stmt; stmt; finalExpr; } — evaluate stmts in order; the
           // last stmt's value is the value of the block. Uses the same

@@ -220,6 +220,21 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
       });
     });
 
+    describe("sieve (table filter)", function() {
+      it("should parse a single-column sieve", function() {
+        parsesOk("void f() { Object x = sieve t using age { age > 25; }; }");
+      });
+      it("should parse a multi-column sieve", function() {
+        parsesOk("void f() { Object x = sieve t using age, salary { (age < 35) && (salary >= 60000); }; }");
+      });
+      it("should reject a sieve without `using`", function() {
+        parseFails("void f() { Object x = sieve t { true; }; }");
+      });
+      it("should reject a sieve without a body block", function() {
+        parseFails("void f() { Object x = sieve t using age; }");
+      });
+    });
+
     describe("for comprehensions", function() {
       it("should still parse the implicit-map form", function() {
         parsesOk("void f() { List<Number> r = [for (int x : xs) { yield x * 2; }]; }");

@@ -183,6 +183,13 @@ prim-expr: NUMBER
          | table-expr
          | record-expr
          | block-expr
+         | sieve-expr
+
+# Table column filter (Pyret's `sieve t using cols: pred end`). The
+# column names listed after `using` are brought into scope inside the
+# brace body, where they refer to that row's value in the corresponding
+# column. Body is an expression-returning block.
+sieve-expr: SIEVE full-expr USING NAME (COMMA NAME)* LBRACE (block-stmt)* RBRACE
 
 # Block expression: `block { stmt1; stmt2; finalExpr; }` evaluates each
 # stmt in order, with the *last* statement's value becoming the value

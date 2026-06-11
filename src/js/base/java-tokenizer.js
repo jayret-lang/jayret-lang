@@ -130,6 +130,9 @@ define("pyret-base/js/java-tokenizer", ["jglr/jglr"], function(E) {
     // Table literals
     {name: "TABLE",     val: "table",     parenIsForExp: true},
     {name: "ROW",       val: "row",       parenIsForExp: true},
+    // Table column operations
+    {name: "SIEVE",     val: "sieve",     parenIsForExp: true},
+    {name: "USING",     val: "using",     parenIsForExp: true},
     // Type keywords
     {name: "INT",     val: "int",     parenIsForExp: true},
     {name: "LONG",    val: "long",    parenIsForExp: true},
