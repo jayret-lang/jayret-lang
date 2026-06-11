@@ -1,0 +1,45 @@
+// typed.jarr - Full type annotations on all definitions
+
+// All parameters and return types annotated
+int add(int x, int y) {
+    return x + y;
+}
+
+boolean isEven(int n) {
+    return n % 2 == 0;
+}
+
+String repeatStr(String s, int times) {
+    if (times == 0) { return ""; }
+    return s + repeatStr(s, times - 1);
+}
+
+// Generic-style: typed higher-order function
+int applyToFive(int n, (int -> int) f) {
+    return f(n);
+}
+
+// Data type with typed fields
+data Point {
+    Pt(double x, double y);
+}
+
+double distance(Point p1, Point p2) {
+    return switch (p1) {
+        case Pt(x1, y1): yield switch (p2) {
+            case Pt(x2, y2): yield num-sqrt(
+                (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)
+            );
+        };
+    };
+}
+
+@Check void testTyped() {
+    assertEquals(add(3, 4), 7);
+    assertTrue(isEven(4));
+    assertFalse(isEven(7));
+    assertEquals(repeatStr("ab", 3), "ababab");
+    assertEquals(repeatStr("x", 0), "");
+    assertEquals(applyToFive(5, (int n) -> n * n), 25);
+    assertEquals(distance(Pt(0, 0), Pt(3, 4)), 5);
+}

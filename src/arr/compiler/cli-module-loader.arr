@@ -19,6 +19,7 @@ import file("concat-lists.arr") as C
 import file("compile-lib.arr") as CL
 import file("compile-structs.arr") as CS
 import file("locators/file.arr") as FL
+import file("locators/java-file.arr") as JFL
 import file("locators/url.arr") as UL
 import file("locators/builtin.arr") as BL
 import file("locators/jsfile.arr") as JSF
@@ -195,8 +196,17 @@ fun get-cached-if-available-known-mtimes(basedir, loc, max-dep-times) block:
   end
 end
 
+fun ends-with-jarr(p :: String) -> Boolean:
+  len = string-length(p)
+  (len >= 5) and (string-substring(p, len - 5, len) == ".jarr")
+end
+
 fun get-file-locator(basedir, real-path):
-  loc = FL.file-locator(real-path, CS.standard-globals)
+  loc = if ends-with-jarr(real-path):
+    JFL.java-file-locator(real-path, CS.standard-globals)
+  else:
+    FL.file-locator(real-path, CS.standard-globals)
+  end
   get-cached-if-available(basedir, loc)
 end
 
@@ -379,7 +389,12 @@ fun module-finder(ctxt :: CLIContext, dep :: CS.Dependency):
         real-path = get-real-path(clp, args.get(0))
         new-context = ctxt.{current-load-path: Filesystem.dirname(real-path)}
         if Filesystem.exists(real-path):
-          CL.located(FL.file-locator(real-path, CS.standard-globals), new-context)
+          loc = if ends-with-jarr(real-path):
+            JFL.java-file-locator(real-path, CS.standard-globals)
+          else:
+            FL.file-locator(real-path, CS.standard-globals)
+          end
+          CL.located(loc, new-context)
         else:
           raise("Cannot find import " + torepr(dep))
         end

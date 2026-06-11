@@ -1,0 +1,30 @@
+// shapes.jarr - Algebraic data types and pattern matching
+
+data Shape {
+    Circle(double radius);
+    Rectangle(double width, double height);
+    Triangle(double base, double height);
+}
+
+double area(Shape s) {
+    return switch (s) {
+        case Circle(r): yield r * r * 3.14159265;
+        case Rectangle(w, h): yield w * h;
+        case Triangle(b, h): yield (b * h) / 2;
+    };
+}
+
+String describe(Shape s) {
+    return switch (s) {
+        case Circle(r): yield "circle with radius " + tostring(r);
+        case Rectangle(w, h): yield "rectangle " + tostring(w) + " by " + tostring(h);
+        case Triangle(b, h): yield "triangle with base " + tostring(b);
+    };
+}
+
+@Check void testShapes() {
+    assertEquals(area(Rectangle(3, 4)), 12);
+    assertEquals(area(Triangle(6, 4)), 12);
+    assertSatisfies(area(Circle(1)), (double a) -> (a > 3.14) && (a < 3.15));
+    assertEquals(describe(Rectangle(3, 4)), "rectangle 3 by 4");
+}

@@ -7,6 +7,8 @@
     "pyret-base/js/namespace": "build/phaseB/js/namespace.js",
     "pyret-base/js/pyret-parser": "build/phaseB/js/pyret-parser.js",
     "pyret-base/js/pyret-tokenizer": "build/phaseB/js/pyret-tokenizer.js",
+    "pyret-base/js/java-parser": "build/phaseB/js/java-parser.js",
+    "pyret-base/js/java-tokenizer": "build/phaseB/js/java-tokenizer.js",
     "pyret-base/js/runtime.js": "build/phaseB/js/runtime.js",
     "pyret-base/js/runtime-util": "build/phaseB/js/runtime-util.js",
     "pyret-base/js/type-util": "build/phaseB/js/type-util.js",

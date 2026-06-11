@@ -8,6 +8,7 @@
 *.log
 *.jarr
 !build/phase0/pyret.jarr
+!examples/jarret/*.jarr
 
 playground/*
 

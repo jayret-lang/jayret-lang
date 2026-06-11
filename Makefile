@@ -248,6 +248,10 @@ parse-test: tests/parse/parse.js build/phaseA/js/pyret-tokenizer.js build/phaseA
 java-parse-test: tests/parse/java-parse.js build/phase0/js/java-tokenizer.js build/phase0/js/java-parser.js
 	cd tests/parse/ && PHASE=build/phase0 $(NODE) java-parse.js
 
+.PHONY : java-translate-test
+java-translate-test: tests/parse/java-translate-test.js src/js/trove/parse-java.js build/phase0/js/java-tokenizer.js build/phase0/js/java-parser.js
+	cd tests/parse/ && PHASE=build/phase0 $(NODE) java-translate-test.js
+
 TEST_FILES := $(wildcard tests/pyret/tests/*.arr)
 TYPE_TEST_FILES := $(wildcard tests/type-check/bad/*.arr) $(wildcard tests/type-check/good/*.arr) $(wildcard tests/type-check/should/*.arr) $(wildcard tests/type-check/should-not/*.arr)
 REG_TEST_FILES := $(wildcard tests/pyret/regression/*.arr)

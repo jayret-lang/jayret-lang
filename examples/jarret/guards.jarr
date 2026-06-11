@@ -1,0 +1,56 @@
+// guards.jarr - Tier-2 return lifting with guard clauses
+
+// Single guard clause
+String classify(int n) {
+    if (n < 0)  { return "negative"; }
+    if (n == 0) { return "zero"; }
+    if (n < 10) { return "small"; }
+    return "large";
+}
+
+// Multiple guards in recursive function
+int gcd(int a, int b) {
+    if (b == 0) { return a; }
+    return gcd(b, a % b);
+}
+
+// Guard over a data type with pattern match in the else
+data Tree {
+    Leaf;
+    Node(int value, Tree left, Tree right);
+}
+
+int treeSize(Tree t) {
+    if (is-Leaf(t)) { return 0; }
+    return switch (t) {
+        case Node(v, l, r): yield 1 + treeSize(l) + treeSize(r);
+    };
+}
+
+int treeSum(Tree t) {
+    if (is-Leaf(t)) { return 0; }
+    return switch (t) {
+        case Node(v, l, r): yield v + treeSum(l) + treeSum(r);
+    };
+}
+
+@Check void testClassify() {
+    assertEquals(classify(-5), "negative");
+    assertEquals(classify(0), "zero");
+    assertEquals(classify(7), "small");
+    assertEquals(classify(100), "large");
+}
+
+@Check void testGcd() {
+    assertEquals(gcd(12, 8), 4);
+    assertEquals(gcd(17, 5), 1);
+    assertEquals(gcd(100, 75), 25);
+}
+
+@Check void testTree() {
+    Tree leaf = Leaf;
+    Tree t = Node(1, Node(2, Leaf, Leaf), Node(3, Leaf, Leaf));
+    assertEquals(treeSize(leaf), 0);
+    assertEquals(treeSize(t), 3);
+    assertEquals(treeSum(t), 6);
+}
