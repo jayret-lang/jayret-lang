@@ -2,7 +2,9 @@
 
 A current-snapshot view of the Jarret implementation: what's built,
 what's still deferred, and what works end-to-end. For language
-reference, see [jarret-spec.md](./jarret-spec.md).
+reference, see [jarret-spec.md](./jarret-spec.md). For where Jarret
+lives and how it is released, see
+[jarret-distribution.md](./jarret-distribution.md).
 
 ## Compatibility with DCIC
 

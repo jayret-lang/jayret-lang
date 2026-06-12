@@ -18,8 +18,7 @@ Pyret-side bug fixes and compiler improvements continue to flow in.
 
 ## Source of truth
 
-- **Canonical repository**: `github.com/<your-handle>/jarret-lang`
-  *(fill in once the repo is created — see Phase 1 setup below)*
+- **Canonical repository**: https://github.com/ulysses4ever/jarret-lang
 - **Default branch**: `main` (the historical `jarett` branch from the
   original fork point)
 - **Upstream tracking branch**: `horizon-sync` — a long-lived branch
@@ -108,31 +107,22 @@ Downstream artefacts (npm package, VSCode extension, hosted IDE)
 shipped with `jarret-v0.X.0` is the contract; `main` can change at any
 time.
 
-## Phase 1 setup checklist
+## Setup history
 
-For the maintainer creating the fork:
+The fork was bootstrapped from the `jarett` branch of
+brownplt/pyret-lang. The initial setup created the GitHub repository,
+pushed `jarett` as the new `main` branch, set up `horizon-sync` to
+track `brownplt/pyret-lang:horizon`, and tagged `jarret-v0.1.0`.
 
-1. Create an empty repository at `github.com/<your-handle>/jarret-lang`.
-2. From a clone of this repo on the `jarett` branch:
-   ```
-   git remote add fork git@github.com:<your-handle>/jarret-lang.git
-   git push fork jarett:main
-   git push fork --tags
-   ```
-3. Set up the `horizon-sync` branch from the current upstream tip:
-   ```
-   git fetch origin                       # origin = brownplt/pyret-lang
-   git checkout -b horizon-sync origin/horizon
-   git push fork horizon-sync
-   ```
-4. On GitHub, configure `main` as the default branch on the fork, and
-   add a branch protection rule requiring `make jarret-test` to pass.
-5. Cut the first release tag once the doc above is updated with the
-   real repo URL:
-   ```
-   git checkout main
-   git tag -a jarret-v0.1.0 -m "Jarret v0.1.0: initial public release"
-   git push fork jarret-v0.1.0
-   ```
-6. Update the **Source of truth** section above with the real URL and
-   commit.
+Recommended local remote configuration for contributors:
+
+```
+git clone https://github.com/ulysses4ever/jarret-lang.git
+cd jarret-lang
+git remote add upstream https://github.com/brownplt/pyret-lang.git
+git fetch upstream
+```
+
+`upstream` is `brownplt/pyret-lang` (the parent project, used only for
+pulling in compiler/runtime fixes via `horizon-sync`). `origin` is the
+Jarret fork itself.
