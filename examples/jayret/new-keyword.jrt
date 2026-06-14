@@ -2,7 +2,7 @@
 //
 // In Pyret, data variants are constructed by calling the variant as a
 // function: `Circle(3)`. Java programmers typically write `new Circle(3)`.
-// Jarret accepts both spellings; the `new` is pure syntactic sugar.
+// Jayret accepts both spellings; the `new` is pure syntactic sugar.
 
 data Shape {
     Circle(double r);

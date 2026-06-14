@@ -238,12 +238,12 @@ TEST_BUILD=$(NODE) $(PYRET_TEST_PHASE)/pyret.jarr \
 test-all: test
 
 .PHONY : test
-test: pyret-test type-check-test pyret-io-test jsnums-test jarret-test
+test: pyret-test type-check-test pyret-io-test jsnums-test jayret-test
 
-# Umbrella for all Jarret-related test suites: the BNF parser, the
-# Jarret-AST-to-Pyret-AST translator (unit), and end-to-end compile+run.
-.PHONY : jarret-test
-jarret-test: java-parse-test java-translate-test java-runtime-test
+# Umbrella for all Jayret-related test suites: the BNF parser, the
+# Jayret-AST-to-Pyret-AST translator (unit), and end-to-end compile+run.
+.PHONY : jayret-test
+jayret-test: java-parse-test java-translate-test java-runtime-test
 
 .PHONY : parse-test
 parse-test: tests/parse/parse.js build/phaseA/js/pyret-tokenizer.js build/phaseA/js/pyret-parser.js
@@ -257,11 +257,11 @@ java-parse-test: tests/parse/java-parse.js build/phase0/js/java-tokenizer.js bui
 java-translate-test: tests/parse/java-translate-test.js src/js/trove/parse-java.js build/phase0/js/java-tokenizer.js build/phase0/js/java-parser.js
 	cd tests/parse/ && PHASE=build/phase0 $(NODE) java-translate-test.js
 
-# End-to-end runtime test: compile each examples/jarret/*.jrt via phaseA
+# End-to-end runtime test: compile each examples/jayret/*.jrt via phaseA
 # pyret and verify all @Check blocks pass. Slower than the translate test
 # because it boots the full Pyret pipeline per example.
 .PHONY : java-runtime-test
-java-runtime-test: tests/parse/java-runtime-test.js $(PHASEA)/pyret.jarr $(wildcard examples/jarret/*.jrt)
+java-runtime-test: tests/parse/java-runtime-test.js $(PHASEA)/pyret.jarr $(wildcard examples/jayret/*.jrt)
 	$(NODE) tests/parse/java-runtime-test.js
 
 TEST_FILES := $(wildcard tests/pyret/tests/*.arr)

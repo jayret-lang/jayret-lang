@@ -1,6 +1,6 @@
-# Jarret Language Specification
+# Jayret Language Specification
 
-**Jarret** ("Java + Pyret") is a Java-style surface syntax for Pyret. It uses curly-braces and
+**Jayret** ("Java + Pyret") is a Java-style surface syntax for Pyret. It uses curly-braces and
 type-before-name declarations familiar from Java, while compiling to the same Pyret runtime with
 the same semantics: exact arithmetic, immutable-by-default bindings, algebraic data types,
 expression-oriented evaluation, and built-in testing.
@@ -34,7 +34,7 @@ File extension: **`.jrt`**
 
 ## 1. Program structure
 
-A Jarret file is a sequence of top-level declarations and expressions, executed top-to-bottom.
+A Jayret file is a sequence of top-level declarations and expressions, executed top-to-bottom.
 There are no mandatory class or `main` wrappers.
 
 ```java
@@ -50,7 +50,7 @@ statement separator when semicolons are omitted.
 
 ## 2. Comments
 
-| Jarret | Pyret equivalent |
+| Jayret | Pyret equivalent |
 |--------|-----------------|
 | `// line comment` | `# line comment` |
 | `/* block comment */` | `#\| block comment \|#` |
@@ -81,7 +81,7 @@ Type annotations are **optional** everywhere. When present, they are written bef
 
 ### Primitive types
 
-| Jarret | Pyret annotation | Notes |
+| Jayret | Pyret annotation | Notes |
 |--------|-----------------|-------|
 | `int` | `Number` | Pyret uses exact rationals for all numbers |
 | `long` | `Number` | |
@@ -100,7 +100,7 @@ Option<String>  // Option<String>
 
 ### Unannotated code
 
-All type annotations may be omitted; Jarret is dynamically typed by default exactly like Pyret.
+All type annotations may be omitted; Jayret is dynamically typed by default exactly like Pyret.
 
 ---
 
@@ -139,7 +139,7 @@ count = count + 1;
 Equivalent Pyret: `count := count + 1`
 
 > **Note**: Assigning to an immutable binding is a runtime error in Pyret (and a well-formedness
-> error in the Pyret compiler), just as in Jarret.
+> error in the Pyret compiler), just as in Jayret.
 
 ### Recursive binding (`rec`) — for cyclic data
 
@@ -167,7 +167,7 @@ annotation is mandatory (same as `int x = ...` and `var int x = ...`).
 ## 6. Functions
 
 Functions are declared with a return type (or `void`), name, and typed parameter list. The `static`
-keyword is **not used** in Jarret.
+keyword is **not used** in Jayret.
 
 ```java
 int square(int n) {
@@ -238,7 +238,7 @@ int x = 3 + 4 * 2;   // 11
 
 ### Comparison
 
-| Jarret | Meaning |
+| Jayret | Meaning |
 |--------|---------|
 | `==` | equality (`is` in check context, `==` in expressions) |
 | `!=` | not-equal |
@@ -246,7 +246,7 @@ int x = 3 + 4 * 2;   // 11
 
 ### Boolean operators
 
-| Jarret | Pyret |
+| Jayret | Pyret |
 |--------|-------|
 | `&&` | `and` |
 | `\|\|` | `or` |
@@ -370,7 +370,7 @@ data Shape:
 end
 ```
 
-> **Naming convention**: Variant names in Jarret are written in `PascalCase`. The translator
+> **Naming convention**: Variant names in Jayret are written in `PascalCase`. The translator
 > converts them to `lowercase` for Pyret (so `Circle(r)` becomes `| circle(r)`). Constructor
 > calls use `PascalCase`: `Circle(5)`.
 
@@ -579,7 +579,7 @@ form remains as a shorthand for `for map(...)`.
 
 ### While loops (deferred)
 
-`while` loops require mutable state and are supported syntactically, but idiomatic Jarret
+`while` loops require mutable state and are supported syntactically, but idiomatic Jayret
 prefers recursion or for-each. Deferred to a later release.
 
 ---
@@ -633,7 +633,7 @@ end
 
 ### Assertion forms
 
-| Jarret | Pyret check form |
+| Jayret | Pyret check form |
 |--------|-----------------|
 | `assertEquals(actual, expected)` | `actual is expected` |
 | `assertNotEquals(a, b)` | `a is-not b` |
@@ -679,7 +679,7 @@ deferred.
 
 ## 14. Return statements
 
-Jarret supports `return` via a three-tier system, reflecting Pyret's expression-oriented
+Jayret supports `return` via a three-tier system, reflecting Pyret's expression-oriented
 semantics.
 
 ### Tier 1 — Tail return (always supported)
@@ -725,7 +725,7 @@ Hint: restructure using if/else or recursion instead.
 
 ## 15. Deferred / not-yet-supported features
 
-The following Pyret features have no Jarret syntax yet and are planned for future releases:
+The following Pyret features have no Jayret syntax yet and are planned for future releases:
 
 | Feature | Pyret construct | Notes |
 |---------|----------------|-------|

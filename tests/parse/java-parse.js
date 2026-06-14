@@ -37,10 +37,10 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
     expect(parse(str)).toBe(false, "Should fail to parse: " + str);
   }
 
-  describe("Jarret parser", function() {
+  describe("Jayret parser", function() {
 
     describe("example programs", function() {
-      var examplesDir = "../../examples/jarret";
+      var examplesDir = "../../examples/jayret";
       var examples = fs.readdirSync(examplesDir).filter(function(f) {
         return f.endsWith(".jrt");
       });

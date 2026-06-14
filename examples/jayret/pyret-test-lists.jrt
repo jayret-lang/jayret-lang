@@ -1,10 +1,10 @@
 // pyret-test-lists.jrt -- behavioural port of tests/pyret/tests/test-lists.arr.
 //
 // Goal: exercise the same list-operation semantics that Pyret's own
-// regression suite covers, through the Jarret translator. If something
+// regression suite covers, through the Jayret translator. If something
 // here regresses we want to know.
 //
-// Blocks skipped (use features Jarret does not have):
+// Blocks skipped (use features Jayret does not have):
 //   - `member` ref/box parts and `member-now*` / `member-always*`
 //   - `shuffle` (uses tuples + `for fold` comprehension)
 //   - `stable sort` (raw-array, tuples, anonymous `{(p): ...}` lambdas)

@@ -1,5 +1,5 @@
 /**
- * Smoke test for the Jarret AST translator (parse-java.js).
+ * Smoke test for the Jayret AST translator (parse-java.js).
  * Uses a lightweight mock runtime to verify the translator produces
  * s-program nodes without errors.
  */
@@ -73,7 +73,7 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
     return mod.values["surface-parse"].app(src, "test.jrt");
   }
 
-  describe("Jarret AST translator", function() {
+  describe("Jayret AST translator", function() {
 
     it("should translate a simple function", function() {
       var r = runTranslator('int sq(int n) { return n * n; }');
@@ -143,7 +143,7 @@ R(["pyret-base/js/java-tokenizer", "pyret-base/js/java-parser"], function(T, G) 
     });
 
     it("should translate all 7 example programs", function() {
-      var exDir = path.join(__dirname, '../../examples/jarret');
+      var exDir = path.join(__dirname, '../../examples/jayret');
       var files = fs.readdirSync(exDir).filter(function(f) { return f.endsWith('.jrt'); });
       files.forEach(function(fname) {
         var src = fs.readFileSync(path.join(exDir, fname), 'utf8');

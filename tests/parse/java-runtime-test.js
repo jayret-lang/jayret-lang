@@ -1,7 +1,7 @@
 /**
- * End-to-end runtime test for Jarret example programs.
+ * End-to-end runtime test for Jayret example programs.
  *
- * For each examples/jarret/*.jrt file:
+ * For each examples/jayret/*.jrt file:
  *   1. Compile it via build/phaseA/pyret.jarr
  *   2. Run the compiled JS bundle with node
  *   3. Verify the output contains "Looks shipshape" (= all @Check tests passed)
@@ -16,11 +16,11 @@ var child_process = require('child_process');
 
 var REPO = path.resolve(__dirname, '../..');
 var PYRET = path.join(REPO, 'build/phaseA/pyret.jarr');
-var EX_DIR = path.join(REPO, 'examples/jarret');
+var EX_DIR = path.join(REPO, 'examples/jayret');
 var BUILTIN_JS = path.join(REPO, 'src/js/trove/');
 var BUILTIN_ARR = path.join(REPO, 'src/arr/trove/');
-var COMPILED_DIR = path.join(REPO, 'tests/compiled/jarret/');
-var OUT_DIR = path.join(REPO, 'tests/compiled/jarret-runnable/');
+var COMPILED_DIR = path.join(REPO, 'tests/compiled/jayret/');
+var OUT_DIR = path.join(REPO, 'tests/compiled/jayret-runnable/');
 var CONFIG = path.join(REPO, 'src/scripts/standalone-configA.json');
 
 if (!fs.existsSync(OUT_DIR))      fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -28,7 +28,7 @@ if (!fs.existsSync(COMPILED_DIR)) fs.mkdirSync(COMPILED_DIR, { recursive: true }
 
 function compileAndRun(srcPath) {
   // Disambiguate output filenames across subdirs (multi-module examples)
-  // so e.g. examples/jarret/multi/main.jrt doesn't clobber a sibling main.
+  // so e.g. examples/jayret/multi/main.jrt doesn't clobber a sibling main.
   var rel = path.relative(EX_DIR, srcPath);
   var base = rel.replace(/\.jrt$/, '').replace(/[\/\\]/g, '_');
   var outPath = path.join(OUT_DIR, base + '.js');
@@ -49,13 +49,13 @@ function compileAndRun(srcPath) {
   return { compileFailed: false, exit: run.status, stdout: run.stdout, stderr: run.stderr };
 }
 
-describe("Jarret end-to-end", function() {
-  // Single-file examples: each *.jrt directly in examples/jarret/.
+describe("Jayret end-to-end", function() {
+  // Single-file examples: each *.jrt directly in examples/jayret/.
   var singles = fs.readdirSync(EX_DIR)
     .filter(function(f) { return f.endsWith('.jrt'); })
     .map(function(f) { return { label: f, src: path.join(EX_DIR, f) }; });
 
-  // Multi-module examples: subdirectories of examples/jarret/, each with
+  // Multi-module examples: subdirectories of examples/jayret/, each with
   // a main.jrt entry point that imports siblings.
   var multis = fs.readdirSync(EX_DIR)
     .filter(function(d) { return fs.statSync(path.join(EX_DIR, d)).isDirectory(); })

@@ -1,6 +1,6 @@
 // hello.jrt - Basic arithmetic and printing
 
-String greeting = "Hello, Jarret!";
+String greeting = "Hello, Jayret!";
 print(greeting)
 
 // Arithmetic uses Pyret's exact rational numbers:

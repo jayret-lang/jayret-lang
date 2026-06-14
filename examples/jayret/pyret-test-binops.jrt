@@ -2,12 +2,12 @@
 //
 // The original file mostly tests Pyret's error-introspection (`run-task`,
 // `is-num-string-binop-error`) and object operator overloading (`_plus`
-// method on a record), neither of which Jarret exposes. What we can port
+// method on a record), neither of which Jayret exposes. What we can port
 // faithfully: the type-respecting positive-case binops, and the rough
-// shape of "string + number raises", verified via Jarret's `raises`.
+// shape of "string + number raises", verified via Jayret's `raises`.
 //
 // Implementation note: this file uses `assertEquals(a, b);` rather than
-// the more concise `a is b;` form because Jarret's grammar has a known
+// the more concise `a is b;` form because Jayret's grammar has a known
 // ambiguity between `a is b;` followed by a statement that begins with
 // unary `-` (e.g. `... is b; 10 - 3 ...`). Using the explicit function-
 // call assertion form avoids the issue entirely.
@@ -46,7 +46,7 @@
 }
 
 @Check void testTypeMismatchRaises() {
-    // Jarret follows Pyret's strict + (no Java-style coercion). Adding
+    // Jayret follows Pyret's strict + (no Java-style coercion). Adding
     // a string to a number raises rather than silently coercing.
     assertRaises(() -> "a" + 5, "");
     assertRaises(() -> 5 + "a", "");

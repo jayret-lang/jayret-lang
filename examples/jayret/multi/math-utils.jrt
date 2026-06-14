@@ -1,5 +1,5 @@
-// math-utils.jrt - exported helpers for use by other Jarret modules.
-// Jarret defaults to `provide *`, so every top-level binding here is
+// math-utils.jrt - exported helpers for use by other Jayret modules.
+// Jayret defaults to `provide *`, so every top-level binding here is
 // available to importers without any explicit `provide` clause.
 
 int sq(int n) { return n * n; }

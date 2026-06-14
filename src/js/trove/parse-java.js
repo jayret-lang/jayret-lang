@@ -268,11 +268,11 @@
       };
       // Build an s-paren wrapper around an Expr so well-formed.arr's reachable-ops
       // check stops descending across operator-kind boundaries. We only wrap
-      // operands that came from buildBinop (tagged via .__jarretOp).
+      // operands that came from buildBinop (tagged via .__jayretOp).
       function maybeParen(expr) {
-        if (expr && expr.__jarretOp) {
+        if (expr && expr.__jayretOp) {
           return RUNTIME.getField(ast, 's-paren')
-            .app(expr.__jarretOp.pos, expr);
+            .app(expr.__jayretOp.pos, expr);
         }
         return expr;
       }
@@ -289,7 +289,7 @@
           .app(p, p, RUNTIME.makeString(opStr), maybeParen(left), maybeParen(right));
         // Tag so the next level's maybeParen() can wrap us. The tag is invisible
         // to Pyret-side code; it only lives on the JS reference.
-        result.__jarretOp = { pos: p };
+        result.__jayretOp = { pos: p };
         return result;
       }
 
@@ -312,7 +312,7 @@
             .map(function(k) { return trStmt(k, pos(topBlock.pos)); });
 
           var body = sblock(pos(topBlock.pos), topStmts.length > 0 ? topStmts : [sid(pos(topBlock.pos), "nothing")]);
-          // Jarret defaults to `provide *`: top-level functions, vars, and data
+          // Jayret defaults to `provide *`: top-level functions, vars, and data
           // are exported. There's no `public` modifier yet; modules either
           // expose everything or nothing, and we choose everything to match
           // typical Java/Pyret expectations for multi-module programs.
