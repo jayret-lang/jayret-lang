@@ -3,7 +3,7 @@ import ast as A
 import base as _
 import either as E
 import load-lib as L
-import parse-pyret as P
+import parse-java as P
 import string-dict as SD
 import runtime-lib as R
 import sets as S
