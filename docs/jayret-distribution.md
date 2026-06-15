@@ -18,7 +18,7 @@ Pyret-side bug fixes and compiler improvements continue to flow in.
 
 ## Source of truth
 
-- **Canonical repository**: https://github.com/ulysses4ever/jayret-lang
+- **Canonical repository**: https://github.com/jayret-lang/jayret-lang
 - **Default branch**: `main` (the historical `jarett` branch from the
   original fork point)
 - **Upstream tracking branch**: `horizon-sync` — a long-lived branch
@@ -117,7 +117,7 @@ track `brownplt/pyret-lang:horizon`, and tagged `jayret-v0.1.0`.
 Recommended local remote configuration for contributors:
 
 ```
-git clone https://github.com/ulysses4ever/jayret-lang.git
+git clone https://github.com/jayret-lang/jayret-lang.git
 cd jayret-lang
 git remote add upstream https://github.com/brownplt/pyret-lang.git
 git fetch upstream
