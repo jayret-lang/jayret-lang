@@ -424,3 +424,23 @@ check "Loading images at the CLI REPL":
   result = restart("include image\na = circle(50, 'solid', 'red')\nimage-width(a)", false)
   val(result) is some(100)
 end
+
+check "Image primitives are auto-imported at the REPL (no `include image` needed)":
+  # Regression test for two distinct bugs in the same area:
+  # (1) "X is used but not previously defined" — when image wasn't in
+  #     the locator's get-extra-imports at all (the original report).
+  # (2) "Key builtin(image) not found" — when image was added to
+  #     get-extra-imports but not to get-dependencies, so the dep was
+  #     injected into the AST but missing from the worklist's
+  #     dependency-map at runtime.
+  val(restart("image-width(triangle(60, 'solid', 'darkgreen'))", false))
+    is some(60)
+  val(restart("image-width(circle(50, 'solid', 'red'))", false))
+    is some(100)
+  val(restart("image-width(rectangle(30, 20, 'solid', 'blue'))", false))
+    is some(30)
+  val(restart(
+    "image-width(overlay(circle(20, 'solid', 'red'), circle(30, 'solid', 'blue')))",
+    false))
+    is some(60)
+end

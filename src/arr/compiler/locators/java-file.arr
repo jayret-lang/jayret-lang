@@ -8,6 +8,51 @@ import file("../js-of-pyret.arr") as JSP
 import file as F
 import pathlib as P
 
+# Mirrors the image exports in starter2024.arr so DCIC-style intro
+# programs (triangle, circle, overlay, ...) work in .jrt files without
+# an explicit `import image as I`. Scoped to user-written Jayret
+# programs only — adding image to CS.standard-imports would shadow
+# names like `line` in compiler internals (js-ast.arr).
+jrt-extra-imports = CS.extra-imports(
+  CS.standard-imports.imports +
+  [list:
+    CS.extra-import(CS.builtin("image"), "image", [list:
+        "above", "above-align", "above-align-list", "above-list",
+        "add-line", "below", "below-align", "below-align-list",
+        "below-list", "beside", "beside-align", "beside-align-list",
+        "beside-list", "center-pinhole", "circle", "color-at-position",
+        "color-list-to-bitmap", "color-list-to-image", "color-named",
+        "crop", "draw-pinhole", "ellipse", "empty-color-scene",
+        "empty-image", "empty-scene", "ff-decorative", "ff-default",
+        "ff-modern", "ff-roman", "ff-script", "ff-swiss", "ff-symbol",
+        "ff-system", "flip-horizontal", "flip-vertical", "frame",
+        "fs-italic", "fs-normal", "fs-slant", "fw-bold", "fw-light",
+        "fw-normal", "image-baseline", "image-height", "image-pinhole-x",
+        "image-pinhole-y", "image-to-color-list", "image-url",
+        "image-width", "images-difference", "images-equal", "is-angle",
+        "is-image", "is-image-color", "is-mode-fade", "is-mode-outline",
+        "is-mode-solid", "isosceles-triangle", "line", "mode-fade",
+        "mode-outline", "mode-solid", "move-pinhole", "name-to-color",
+        "overlay", "overlay-align", "overlay-align-list", "overlay-list",
+        "overlay-onto-offset", "overlay-xy", "place-image",
+        "place-image-align", "place-pinhole", "point", "point-polar",
+        "point-polygon", "point-xy", "put-image", "radial-star",
+        "rectangle", "regular-polygon", "rhombus", "right-triangle",
+        "rotate", "scale", "scale-xy", "scene-line", "square", "star",
+        "star-polygon", "star-sized", "text", "text-font", "triangle",
+        "triangle-aas", "triangle-asa", "triangle-ass", "triangle-saa",
+        "triangle-sas", "triangle-ssa", "triangle-sss", "underlay",
+        "underlay-align", "underlay-align-list", "underlay-list",
+        "underlay-xy", "wedge", "x-center", "x-left", "x-middle",
+        "x-pinhole", "x-right", "y-baseline", "y-bottom", "y-center",
+        "y-middle", "y-pinhole", "y-top"
+      ],
+      [list:
+        "FillMode", "FontFamily", "FontStyle", "FontWeight", "Image",
+        "Point", "XPlace", "YPlace"
+      ])
+  ])
+
 fun mockable-java-file-locator(file-ops):
   lam(path, globals):
     var ast = nothing
@@ -34,13 +79,14 @@ fun mockable-java-file-locator(file-ops):
         ast
       end,
       method get-dependencies(self):
-        CL.get-standard-dependencies(self.get-module(), self.uri())
+        CL.get-dependencies(self.get-module(), self.uri()) +
+        jrt-extra-imports.imports.map(_.dependency)
       end,
       method get-native-modules(self):
         [list:]
       end,
       method get-extra-imports(self):
-        CS.standard-imports
+        jrt-extra-imports
       end,
       method get-globals(self): self.globals end,
       method set-compiled(self, cr, deps) block:
