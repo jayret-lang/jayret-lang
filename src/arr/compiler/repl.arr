@@ -216,7 +216,8 @@ fun make-repl<a>(
       method get-module(self): CL.pyret-ast(get-ast()) end,
       method get-extra-imports(self): repl-extra-imports end,
       method get-dependencies(self):
-        CL.get-standard-dependencies(self.get-module(), self.uri())
+        CL.get-dependencies(self.get-module(), self.uri()) +
+        repl-extra-imports.imports.map(_.dependency)
       end,
       method get-globals(self): globals end,
       method uri(self): "definitions://" end,
