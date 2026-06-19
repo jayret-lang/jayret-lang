@@ -177,6 +177,7 @@ prim-expr: NUMBER
          | PARENAFTERBRACE full-expr RPAREN
          | switch-expr
          | construct-expr
+         | array-literal
          | map-for-expr
          | new-expr
          | ask-expr
@@ -255,6 +256,9 @@ new-expr: NEW NAME PARENNOSPACE [full-expr (COMMA full-expr)*] RPAREN
 # Pyret-style list/construct literal: [list: 1, 2, 3]
 construct-expr: LBRACK NAME COLON [full-expr (COMMA full-expr)*] RBRACK
               | LBRACK RBRACK
+
+# Java/JS-style array literal: ["x", "y"] → [list: "x", "y"]
+array-literal: LBRACK full-expr (COMMA full-expr)* RBRACK
 
 # Comprehension forms:
 #   [for (T x : xs) { ... }]                 -- implicit map (back-compat)

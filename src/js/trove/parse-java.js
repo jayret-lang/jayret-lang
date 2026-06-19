@@ -944,6 +944,19 @@
                  sid(p, ctorName), makeList(elems));
         },
 
+        'array-literal': function(node) {
+          var k = node.kids;
+          var p = pos(node.pos);
+          // [full-expr, (COMMA full-expr)*] → [list: exprs...]
+          var elems = [];
+          for (var i = 0; i < k.length; i++) {
+            if (k[i].name === 'full-expr') elems.push(tr(k[i]));
+          }
+          return RUNTIME.getField(ast, 's-construct')
+            .app(p, RUNTIME.getField(ast, 's-construct-normal'),
+                 sid(p, "list"), makeList(elems));
+        },
+
         'map-for-expr': function(node) {
           var k = node.kids;
           var p = pos(node.pos);

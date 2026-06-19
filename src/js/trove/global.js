@@ -50,6 +50,8 @@
         "raw-list-map": ["forall", ["a", "b"], ["arrow", [["arrow", ["tva"], "tvb"], ["List", "tva"]], ["List", "tvb"]]],
         "raw-list-filter": ["forall", ["a"], ["arrow", [["arrow", ["tva"], "Boolean"], ["List", "tva"]], ["List", "tva"]]],
         "raw-list-fold": ["forall", ["a", "b"], ["arrow", [["arrow", ["tvb", "tva"], "tvb"], "tvb", ["List", "tva"]], "tvb"]],
+        "open-table": ["arrow", ["Any"], "Any"],
+        "as-loader-option": ["arrow", ["String", "String", "Any"], "Any"],
         "spy": ["arrow", ["Any", "String", ["RawArray", "Any"], ["RawArray", "String"], ["RawArray", "Any"]], "Nothing"],
         "current-checker": ["arrow", [], ["record", {
           "run-checks": "tbot",
@@ -84,6 +86,8 @@
 
       "torepr": ["arrow", ["Any"], "String"],
       "to-repr": ["arrow", ["Any"], "String"],
+
+      "loadTable":  ["arrow", [["List", "String"]], "Any"],
       "tostring": ["arrow", ["Any"], "String"],
       "to-string": ["arrow", ["Any"], "String"],
       "not": ["arrow", ["Boolean"], "Boolean"],

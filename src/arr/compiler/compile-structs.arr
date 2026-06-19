@@ -3302,7 +3302,11 @@ standard-imports = extra-imports(
           "list-to-list-set",
           "list-to-tree-set"
         ],
-        [list: "Set"])
+        [list: "Set"]),
+      extra-import(builtin("load-table-builder"), "load-table-builder", [list:
+          "loadTable"
+        ],
+        [list: "LoadTableBuilder"])
     ])
 
 # MARK(joe/ben): modules

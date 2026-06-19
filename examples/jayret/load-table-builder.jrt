@@ -1,0 +1,62 @@
+// load-table-builder.jrt - tests for the loadTable builder API
+//
+// loadTable(cols).source(src).withSanitizer(col, fn).load() -> Table
+
+import csv as C;
+import data-source as DS;
+
+@Check void testHappyPathNoSanitizers() {
+    Table t = loadTable(["x", "y"])
+      .source(C.csv-table-str("x,y\n1,2\n3,4", C.default-options))
+      .load();
+    assertEquals(t.length(), 2);
+}
+
+@Check void testHappyPathWithSanitizer() {
+    Table t = loadTable(["x", "y"])
+      .source(C.csv-table-str("x,y\n1,2\n3,4", C.default-options))
+      .withSanitizer("x", DS.num-sanitizer)
+      .withSanitizer("y", DS.num-sanitizer)
+      .load();
+    assertEquals(t.length(), 2);
+    assertEquals(t.row-n(0).get-value("x"), 1);
+    assertEquals(t.row-n(1).get-value("y"), 4);
+}
+
+@Check void testSanitizerBeforeSource() {
+    // Chain order: .withSanitizer before .source should produce the same table
+    Table t = loadTable(["x", "y"])
+      .withSanitizer("x", DS.num-sanitizer)
+      .source(C.csv-table-str("x,y\n10,20", C.default-options))
+      .withSanitizer("y", DS.num-sanitizer)
+      .load();
+    assertEquals(t.row-n(0).get-value("x"), 10);
+    assertEquals(t.row-n(0).get-value("y"), 20);
+}
+
+@Check void testErrorNoSource() {
+    assertRaises(
+      () -> loadTable(["x"]).load(),
+      "loadTable: .source() must be called before .load()");
+}
+
+@Check void testErrorDoubleSource() {
+    Object src = C.csv-table-str("x\n1", C.default-options);
+    assertRaises(
+      () -> loadTable(["x"]).source(src).source(src).load(),
+      "loadTable: .source() called more than once");
+}
+
+@Check void testErrorUnknownColumn() {
+    Object src = C.csv-table-str("x\n1", C.default-options);
+    assertRaises(
+      () -> loadTable(["x"]).source(src).withSanitizer("z", DS.num-sanitizer).load(),
+      "loadTable: column 'z' is not in the column list");
+}
+
+@Check void testErrorDuplicateSanitizer() {
+    Object src = C.csv-table-str("x\n1", C.default-options);
+    assertRaises(
+      () -> loadTable(["x"]).source(src).withSanitizer("x", DS.num-sanitizer).withSanitizer("x", DS.num-sanitizer).load(),
+      "loadTable: duplicate withSanitizer call for column 'x'");
+}

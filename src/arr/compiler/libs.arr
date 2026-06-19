@@ -29,6 +29,7 @@ import srcloc as _
 import statistics as _
 import system as _
 import tables as _
+import load-table-builder as _
 import valueskeleton as _
 
 import builtin-modules as _
